@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DialogAddInvoicePurchase</class>
+ <widget class="QDialog" name="DialogAddInvoicePurchase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1021</width>
+    <height>840</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Facture d'achat</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Fichier</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditFilePath">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonBrowse">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Informations de la facture</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Date</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QDateEdit" name="dateEdit"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Titre</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEditLabel">
+          <property name="placeholderText">
+           <string>Achat de marchandise</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Montant TTC</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Monnaie</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Compte 6</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Compte fournisseur</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="lineEditAccountSupplier"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="lineEditAccount"/>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>TVA</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Monnaie TVA</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Pays TVA</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QComboBox" name="comboVatCountry"/>
+        </item>
+        <item row="5" column="1">
+         <widget class="QComboBox" name="comboCurrency">
+          <item>
+           <property name="text">
+            <string>EUR</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>USD</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>GBP</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>AUD</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>BGN</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CAD</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CHF</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CZK</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CNY</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>DKK</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>HRK</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>HUF</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>INR</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>JPY</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>MXN</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>PLN</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RON</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>SGD</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>SEK</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TRY</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>UAH</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QDoubleSpinBox" name="spinBoxAmount">
+          <property name="minimum">
+           <double>-99999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>99999999.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QDoubleSpinBox" name="spinBoxVat">
+          <property name="minimum">
+           <double>-999999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999999.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QComboBox" name="comboCurrencyVat">
+          <item>
+           <property name="text">
+            <string>EUR</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>USD</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>GBP</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>AUD</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>BGN</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CAD</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CHF</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CZK</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CNY</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>DKK</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>HRK</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>HUF</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>INR</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>JPY</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>MXN</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>PLN</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RON</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>SGD</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>SEK</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TRY</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>UAH</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>DialogAddInvoicePurchase</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DialogAddInvoicePurchase</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

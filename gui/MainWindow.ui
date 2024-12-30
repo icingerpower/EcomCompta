@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1101</width>
+    <height>910</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>E-TVA APPS</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normalon>:/gui/ecomcompta-icon.ico</normalon>
+   </iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Client</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBoxCustomer"/>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="PaneCustomers" name="tabCustomers">
+       <attribute name="title">
+        <string>Clients</string>
+       </attribute>
+      </widget>
+      <widget class="PaneImportation" name="tabImportationSales">
+       <attribute name="title">
+        <string>Importation</string>
+       </attribute>
+      </widget>
+      <widget class="PaneServiceSales" name="tabServices">
+       <attribute name="title">
+        <string>Services</string>
+       </attribute>
+      </widget>
+      <widget class="PaneAmazonPayments" name="tabAmazonPayments">
+       <attribute name="title">
+        <string>Paiements Amazon</string>
+       </attribute>
+      </widget>
+      <widget class="PaneVatUE" name="tabTvaUE">
+       <attribute name="title">
+        <string>TVA UE</string>
+       </attribute>
+      </widget>
+      <widget class="PaneBookKeeping" name="tabBookKeeping">
+       <attribute name="title">
+        <string>Comptabilité</string>
+       </attribute>
+      </widget>
+      <widget class="PaneProfit" name="tabProfit">
+       <attribute name="title">
+        <string>Profit</string>
+       </attribute>
+      </widget>
+      <widget class="PaneInventory" name="tabInventaire">
+       <attribute name="title">
+        <string>Inventaire</string>
+       </attribute>
+      </widget>
+      <widget class="PaneParams" name="tabParams">
+       <attribute name="title">
+        <string>Paramètres</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1101</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>PaneImportation</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneImportation.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneVatUE</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneVatUE.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneCustomers</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneCustomers.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneParams</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneParams.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneAmazonPayments</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneAmazonPayments.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneBookKeeping</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneBookKeeping.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneInventory</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneInventory.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneServiceSales</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneServiceSales.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneProfit</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneProfit.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PaneInventory</class>
+ <widget class="QWidget" name="PaneInventory">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1779</width>
+    <height>1286</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Inventaire</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="buttonAddPurchase">
+       <property name="toolTip">
+        <string>Ajouter l'inventaire correspond à un achat</string>
+       </property>
+       <property name="text">
+        <string>Ajouter achat</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonAddInventoryBegin">
+       <property name="toolTip">
+        <string>Ajouter un fichier d'inventaire de début d'année</string>
+       </property>
+       <property name="text">
+        <string>Ajouter inventaire</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonAddReturn">
+       <property name="toolTip">
+        <string>Rapport &gt; Expédié par Amazon &gt; Stock / Grand livre de stock</string>
+       </property>
+       <property name="text">
+        <string>Ajouter retours</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonAddCodesEquivalent">
+       <property name="toolTip">
+        <string>Ajouter un fichier indiquant des codes produits équivalents</string>
+       </property>
+       <property name="text">
+        <string>Ajouter codes équivalents</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonAddBundles">
+       <property name="toolTip">
+        <string>Ajouter des fichiers d'informations de lot</string>
+       </property>
+       <property name="text">
+        <string>Ajouter lots</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonRemove">
+       <property name="toolTip">
+        <string>Supprimer le fichier sélectionné</string>
+       </property>
+       <property name="text">
+        <string>Supprimer</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonReplace">
+       <property name="toolTip">
+        <string>Remplacer le fichier sélectionné</string>
+       </property>
+       <property name="text">
+        <string>Remplacer</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBoxYear"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonLoadInventory">
+       <property name="text">
+        <string>Charger</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonSaveInventory">
+       <property name="text">
+        <string>Sauvegarder</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonSaveUnsold">
+       <property name="text">
+        <string>Save unsold for a year</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="styleSheet">
+      <string notr="true">QSplitter::handle {background: black;}</string>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Fichiers importés</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTreeView" name="treeViewFilesImported">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QToolBox" name="toolBox">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="pageInventory">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1164</width>
+         <height>541</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Inventaire</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>200</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Filtre</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <widget class="QTabWidget" name="tabWidget_2">
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <widget class="QWidget" name="tabWidget_2Page1">
+              <attribute name="title">
+               <string>Paramètres</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout">
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>Faible inventaire (mois)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>Code parent</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2">
+                <widget class="QCheckBox" name="checkBoxMonthInventory">
+                 <property name="text">
+                  <string>Activer</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QCheckBox" name="checkBoxCodeContains">
+                 <property name="text">
+                  <string>Contient</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="2">
+                <widget class="QCheckBox" name="checkBoxAnnualSales">
+                 <property name="text">
+                  <string>Activer</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="lineEditCodeParent">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QCheckBox" name="checkBoxCodeParentContains">
+                 <property name="text">
+                  <string>Contient</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="2">
+                <widget class="QPushButton" name="buttonFilter">
+                 <property name="text">
+                  <string>Filtrer</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Ventes annuelles min.</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Code</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <item>
+                  <spacer name="horizontalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="buttonExportFiltered">
+                   <property name="text">
+                    <string>Exporter</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="buttonResetFilter">
+                   <property name="text">
+                    <string>Reset</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLineEdit" name="lineEditName"/>
+               </item>
+               <item row="4" column="1">
+                <widget class="QSpinBox" name="spinBoxAnnualSalesMin">
+                 <property name="maximum">
+                  <number>99999</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>5</number>
+                 </property>
+                 <property name="value">
+                  <number>2</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QSpinBox" name="spinBoxMonthsLeft">
+                 <property name="minimum">
+                  <number>0</number>
+                 </property>
+                 <property name="maximum">
+                  <number>12</number>
+                 </property>
+                 <property name="value">
+                  <number>2</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0">
+                <widget class="QLabel" name="labelInventoryValue">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_4">
+                 <property name="text">
+                  <string>Nom produit</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="lineEditCode"/>
+               </item>
+               <item row="2" column="2">
+                <widget class="QCheckBox" name="checkBoxProductNameContains">
+                 <property name="text">
+                  <string>Contient</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab">
+              <attribute name="title">
+               <string>Codes à exclure</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <item>
+                <widget class="QPlainTextEdit" name="textEditExcludeCodes"/>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTableView" name="tableInventory">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="Errors">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1164</width>
+         <height>541</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Erreurs</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QPushButton" name="buttonExportUnknownCodes">
+            <property name="text">
+             <string>Exporter les inconnus</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="buttonExportAllErrorCodes">
+            <property name="text">
+             <string>Exporter tout</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTableView" name="tableErrors">
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="pageBundles">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1164</width>
+         <height>541</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Lots</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QTableView" name="tableBundle">
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

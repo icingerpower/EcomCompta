@@ -1,0 +1,62 @@
+- When deleting same report file name in different year directory, it will delete all
+- Add company country registration (Countries that have implemented non-resident domestic reverse charge mechanism are Belgium, France, Italy, Netherlands and Spain)
+- If order date <= 20 days to current AND not complete, reject it
+- If vat different than amazon, ask to accept amazon data or us + easy way to see those orders
+- Add a may to change vat manually of an order ?
+
+- Le journal de Qonto s'appele TV AMAZOn dans la génération de la compta
+- Pour les frais bancaires lettrés, c'est le comtpe 580000 qui est utilisé
+- Les self-associations sont mal chargés ou mal enregistrés.
+- Transferwise USD label devraient avoir montant original + Achat USD
+- Paypal compte charge inversé
+- Compte TVA achat manquant
+- TVA négative avec Qonto février 2022 alors qu'une nombre ne peut être négatif (écritures comptables générées)
+- Achats ne sont pas convertis
+- Les comptes TVA de ventes ont une colonne en moins
+- Pas de TVA dans les ventes FR
+- Pas de IOSS TVA pour l'irelance et pas de OSS pour la roumanie
+- Copy paste bank account
+
+
+- When custom edit of amazon payment, I can launch an exception / warning in case the entry is not valid
+- 1304 / 1305 refund has date march 1 2022
+- Payment 08/04/2021 amazon.co.uk round diff is 0.01
+- Dans les ventes SIMPLEs, le label est pas bon (y a pas origine vers arrivé)
+
+
+TODO
+- Si fichier invoicing manquant & remboursement, ça plant au lieu d'indiquer la commande comme incomplète
+- Voir TVA + si on peut cacher les colonnes TVA ainsi que l'onglet commande / remboursements quand c'est vide
+- Regarder remboursements après chargement compta fait planter
+- Guand on renomme le fournisseur d'une facture d'achat, ça plante
+- Quand je délettre, ça ne met pas à jour les couleurs
+- Quand je charge de nouveaux rapports mensuels et que je lettre directement, ça plante et ne trouve pas l'ID de la ligne du journal de banque
+=> Il faudra faire cela puis recharger les options du logiciel à chaque fois pour déboguer
+- CDiscount.fr / fnac.com + params in TODO
+- Permettre de changer les dates des expéditions ce qui est utile en fin période de changement de loi sur la TVA
+- Add feature to change refund guessed (cdiscount)
+- Si je séléctionne mazoone, calcul TVA UE pour cédric, puis vais dans importation pardize, puis change de client mazoone > cedric, ça plante
+- Il faudrait gérer les remboursements partiels (boite de dialogue ainsi qu'avec cdiscount)
+- When creating a customer, we should add a default shipping address
+- Block VAT UE and accounting tab is no year, until year is available
+- Allow to change refund date
+- Lors des virement interne stripe, y a des erreurs de montant à cause du jour différent
+- When in UE important payment report of US, it should reject
+- Integrate country from file
+- We should be able to delete Paypal bank account file
+- When changing refund date / adding refund, it should update in accounting pane (or reset it?)
+
+
+
+NIDAL
+- Peux-tu trouver des commandes avec pays différent de la France pour voir les codes à 3 lettres + pareil avec status de commande + trouver commande remboursement + trouver commande avec 2 articles + commande avec quantité = 2
+- Liste pays
+- Se plonger dans les rapports amazon pour suivre
+- Trouver les écritures écritures optimales (analyser la concurence, faire des rescrits, contacter l'order des experts comptables)
+- Fournir les données cdiscounts / ebay / amazon (amazon d'un autre vendeur pour diversifier les données de test)
+- Écrire les tests unitaires
+
+FAITH CHECK:
+- File encoding
+- File dates
+- No duplicates

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WidgetOrders</class>
+ <widget class="QWidget" name="WidgetOrders">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1137</width>
+    <height>748</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Commandes</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="buttonExpandAllOrders">
+       <property name="text">
+        <string>Tout dérouler</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonAddRefund">
+       <property name="text">
+        <string>Ajouter remboursement</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonUpdateShippingAddress">
+       <property name="text">
+        <string>Changer l'adresse d'expédition</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBoxShippingAddress"/>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBoxConfirmAddress">
+       <property name="text">
+        <string>Demander confirmation</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttoncancelAddresChange">
+       <property name="toolTip">
+        <string>Annuler le changement d'adresse d'expédition</string>
+       </property>
+       <property name="text">
+        <string>Annuler l'adresse</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonChangeDate">
+       <property name="text">
+        <string>Changer la date</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Filtre</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="2" column="5">
+         <widget class="QSpinBox" name="spinMaxAmount"/>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Pays</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>Sous-channel</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QSpinBox" name="spinMinAmount"/>
+        </item>
+        <item row="1" column="5">
+         <widget class="QDateEdit" name="dateEditMax"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Nom client</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>SKU</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Date maximum</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="comboBoxSubChannel"/>
+        </item>
+        <item row="0" column="4">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Date minimum</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Identifiant commande</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEditOrderId"/>
+        </item>
+        <item row="2" column="4">
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Montant max.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEditCustomerName"/>
+        </item>
+        <item row="0" column="5">
+         <widget class="QDateEdit" name="dateEditMin"/>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Montant min.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLineEdit" name="lineEditSku"/>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <widget class="QCheckBox" name="checkBoxOnlySeveralShipping">
+          <property name="text">
+           <string>Plusieurs expéditions uniquement</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2" colspan="2">
+         <widget class="QCheckBox" name="checkBoxOnlyPro">
+          <property name="text">
+           <string>Professionnel uniquement</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="4" colspan="2">
+         <widget class="QCheckBox" name="checkBoxShippedNextYear">
+          <property name="text">
+           <string>Expédié l'année suivante</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QComboBox" name="comboCountryFilter"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="buttonFilter">
+          <property name="text">
+           <string>Filtrer</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonResetFilter">
+          <property name="text">
+           <string>Remise à 0</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonExport">
+          <property name="styleSheet">
+           <string notr="true">Exporter les commandes au format CSV</string>
+          </property>
+          <property name="text">
+           <string>Exporter</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTreeView" name="treeViewOrders">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PaneImportation</class>
+ <widget class="QWidget" name="PaneImportation">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1101</width>
+    <height>938</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Importation</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QListWidget" name="listSaleChannels">
+     <property name="maximumSize">
+      <size>
+       <width>150</width>
+       <height>16777215</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QStackedWidget" name="stackedChannellWidget"/>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>listSaleChannels</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>stackedChannellWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>92</x>
+     <y>91</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>226</x>
+     <y>78</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

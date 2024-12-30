@@ -1,0 +1,34 @@
+- 404-8802432-6151536 (2 invoices)
+- 402-4340902-8493922 (4 items / 2 shipments)
+- 403-6482698-1698716 (3 units of same items shipped from spain and france to france)
+- 408-9982825-6136343 (2 units with 2 shipments with different VAT country and PRO)
+- 405-2155867-2088354 (2 shipments with different VAT country and PRO half fr and half es)
+- 408-5195353-6560339 (vente amazon.fr ES > FR avec TVA fr mais en déclaration OSS)
+- 408-1347556-2250745 4 units and partial refund
+- 304-0245979-9479537 3 products / 2 refunds with IOSS
+- 403-2044624-2659511 3 products / 2 expéditions Réunion
+- 304-3920453-8840362 Commande 30 juin expédié 1 juillet => OSS ou non ? D'après amazon non
+- 026-5137950-3236320 IOSS
+- 303-8662646-0151539 un article et 2 remboursements…le produit puis la livraison
+- 402-6413921-1980354 no country code in order report
+- 407-0432955-8852310 CZ > ES pro means vat for CZ but ES > ES not VAT because countries that have implemented non-resident domestic reverse charge mechanism are Belgium, France, Italy, Netherlands and Spain. ALSO because is vat number J09500158 is local and not UE (see case 7602743852). A local VAT number is not validated by VIES.
+- 408-8663806-3875547 Commande vers IT mais en fait San Marino
+- 305-7159603-7269163 Commande qui d'un rapport à l'autre a différent id d'article expédié
+ ne fait pas partie de l'italie ni de l'UE
+- Parler des commandes avec des articles ayant plusieurs taux de TVA
+- 404-0760153-3734736 plean d'expéditions avec 3 factures
+- 
+USA
+113-8195834-2026639 USA > Irelande avec amazon exporter en DDP
+111-8997758-0237065 USA > USA domestique avec des taxes
+113-8601307-5729053 USA domestique FBM avec taxes
+=» On voit aussi que y a des différences entre les montants depuis les rapports de paiements
+
+
+UNIT TESTS
+205-0204215-5540300 with failed marketplacefacilitor at 0 but shown and no invoices
+303-3059940-9200336 because in payment-report, date is 20 days late, going next year
+
+
+CDISCOUNT
+- Remboursement avec articles au taux de TVA different

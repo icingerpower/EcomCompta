@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PaneParams</class>
+ <widget class="QWidget" name="PaneParams">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1123</width>
+    <height>1019</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Paramètres</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QListWidget" name="listWidget">
+     <property name="maximumSize">
+      <size>
+       <width>250</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <item>
+      <property name="text">
+       <string>Numéros de TVA</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Taux de TVA</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Stock déporté</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Centres d'expédition Amazon FBA</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Exporter / Importer</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Adresses d'expédition</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Frais à classer</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Comptes comptables</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Fichiers importés</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Fichiers commandes personnalisés</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Facturation</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="PaneVatNumbers" name="pageVatNumbers"/>
+     <widget class="PaneVatParams" name="pageVatParams"/>
+     <widget class="PaneDeportedInventory" name="pageDeportedInventory"/>
+     <widget class="PaneFbaCenters" name="pageFbaCenters"/>
+     <widget class="PaneExportImport" name="pageExportImport"/>
+     <widget class="PaneShippingAddresses" name="pageShippingAddresses"/>
+     <widget class="PaneFees" name="pageFees"/>
+     <widget class="PaneBookKeepingAccounts" name="pageBookKeepingAccounts"/>
+     <widget class="PaneImportedReportFiles" name="pageImportedReports"/>
+     <widget class="PaneCustomOrderParams" name="pagePaneCustomOrderParams"/>
+     <widget class="PaneInvoiceSettings" name="pageInvoiceSettings"/>
+    </widget>
+   </item>
+   <item>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PaneVatParams</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneVatParams.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneFbaCenters</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneFbaCenters.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneExportImport</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneExportImport.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneShippingAddresses</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneShippingAddresses.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneFees</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneFees.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneImportedReportFiles</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneImportedReportFiles.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneVatNumbers</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneVatNumbers.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneDeportedInventory</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneDeportedInventory.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneBookKeepingAccounts</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneBookKeepingAccounts.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneCustomOrderParams</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneCustomOrderParams.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PaneInvoiceSettings</class>
+   <extends>QWidget</extends>
+   <header>gui/panes/PaneInvoiceSettings.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>listWidget</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>stackedWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>223</x>
+     <y>163</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>411</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
