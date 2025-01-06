@@ -1,5 +1,7 @@
 HEADERS += \
-    $$PWD/CountryItemDelegate.h
+    $$PWD/CountryItemDelegate.h \
+    $$PWD/SaleGroupsDelegate.h
 
 SOURCES += \
-    $$PWD/CountryItemDelegate.cpp
+    $$PWD/CountryItemDelegate.cpp \
+    $$PWD/SaleGroupsDelegate.cpp

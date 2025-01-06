@@ -323,7 +323,7 @@ QDir SettingManager::dirInventoryPurchase(int year) const
     return dir;
 }
 //----------------------------------------------------------
-QDir SettingManager::dirInventoryAmzReturns(int year) const
+QDir SettingManager::dirInventoryAmzReturns(int year) const // amazon-storage-inventory
 {
     QDir dir = dirInventory(year);
     QString dirName = QObject::tr("retours-amazon", "amazon-returns (no space please in the translation)");

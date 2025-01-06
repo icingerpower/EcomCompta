@@ -43,6 +43,7 @@ public:
     QSet<QString> reportsFrom() const;
     QList<QStringList> reportCombinationMissing() const;
 
+    QString getLangCode() const;
     QDateTime getDateTime() const;
     void setDateTime(const QDateTime &dateTime);
 

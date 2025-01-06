@@ -16,6 +16,7 @@ FORMS += \
     $$PWD/PaneImportedReportFiles.ui \
     $$PWD/PaneInventory.ui \
     $$PWD/PaneInvoiceSettings.ui \
+    $$PWD/PaneLastSales.ui \
     $$PWD/PaneParams.ui \
     $$PWD/PaneProfit.ui \
     $$PWD/PaneServiceSales.ui \
@@ -39,6 +40,7 @@ HEADERS += \
     $$PWD/PaneImportedReportFiles.h \
     $$PWD/PaneInventory.h \
     $$PWD/PaneInvoiceSettings.h \
+    $$PWD/PaneLastSales.h \
     $$PWD/PaneParams.h \
     $$PWD/PaneProfit.h \
     $$PWD/PaneServiceSales.h \
@@ -62,6 +64,7 @@ SOURCES += \
     $$PWD/PaneImportedReportFiles.cpp \
     $$PWD/PaneInventory.cpp \
     $$PWD/PaneInvoiceSettings.cpp \
+    $$PWD/PaneLastSales.cpp \
     $$PWD/PaneParams.cpp \
     $$PWD/PaneProfit.cpp \
     $$PWD/PaneServiceSales.cpp \

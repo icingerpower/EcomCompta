@@ -51,7 +51,7 @@ void InventoryManager::load(int year)
         _addPurchaseOrInventoryFile(fileInfo.absoluteFilePath(), date);
     }
     for (auto fileInfo : SettingManager::instance()
-         ->dirInventoryAmzReturns(year).entryInfoList(
+         ->dirInventoryAmzReturns(year).entryInfoList( // amazon-storage-inventory
              QStringList() << "*.csv", QDir::Files)) {
         QString dateString = fileInfo.fileName().split("__")[0];
         QDate date = QDate::fromString(dateString, "yyyy-MM-dd");
@@ -193,9 +193,6 @@ void InventoryManager::_addPurchaseOrInventoryFile(
                 codeEmptyFound = true;
             } else {
                 QString mainCode1 = m_otherCodeToMain.value(code, code);
-                if (mainCode1 == "GLAZ-CC-SETA") {
-                    int TEMP=10;++TEMP;
-                }
                 QStringList mainCodes = {};
                 QList<int> codesUnits = {};
                 int totalBundleUnits = 0;
@@ -211,6 +208,21 @@ void InventoryManager::_addPurchaseOrInventoryFile(
                 } else {
                     totalBundleUnits = 1;
                     m_mainCodeToOtherInfos[mainCode1].titles << title;
+                    if (purchase)
+                    {
+                        if (fileName.contains("-de", Qt::CaseInsensitive))
+                        {
+                            m_mainCodeToOtherInfos[mainCode1].langTitle["de"] = title;
+                        }
+                        else if (fileName.contains("-fr", Qt::CaseInsensitive))
+                        {
+                            m_mainCodeToOtherInfos[mainCode1].langTitle["fr"] = title;
+                        }
+                        else
+                        {
+                            m_mainCodeToOtherInfos[mainCode1].langTitle["en"] = title;
+                        }
+                    }
                     mainCodes.append(mainCode1);
                     codesUnits.append(1);
                 }
@@ -287,18 +299,26 @@ void InventoryManager::_addAmazonReturnFile(
             int unitReturned = elements[posReturns].toInt();
             QStringList mainCodes = {};
             QList<int> codesUnits = {};
-            int totalBundleUnits = 0;
+            //int totalBundleUnits = 0;
             if (ManagerBundle::instance()->isBundle(mainCode1)) {
                 auto codeUnits = ManagerBundle::instance()->codesBase(mainCode1);
                 for (auto codeUnit : qAsConst(codeUnits)) {
-                    totalBundleUnits += codeUnit.second;
+                    //totalBundleUnits += codeUnit.second;
                     mainCodes << m_otherCodeToMain.value(
                                      codeUnit.first, codeUnit.first);
                     codesUnits << codeUnit.second;
                 }
             } else {
-                totalBundleUnits = 1;
+                //totalBundleUnits = 1;
                 m_mainCodeToOtherInfos[mainCode1].titles << title;
+                if (filePath.contains("-eu-"))
+                {
+                    m_mainCodeToOtherInfos[mainCode1].langTitle["fr"] = title;
+                }
+                else if (filePath.contains("-us-"))
+                {
+                    m_mainCodeToOtherInfos[mainCode1].langTitle["en"] = title;
+                }
                 mainCodes.append(mainCode1);
                 codesUnits.append(1);
             }
@@ -350,8 +370,24 @@ QList<InventoryManager::ColInfo> *InventoryManager::_colInfos() const
                ,{COL_TITLES, [](
                 const InventoryManager *manager, const QString &code, const QDate &,
                 const Infos &, const InfoTotals &) -> QString{
-                    return manager->m_mainCodeToOtherInfos.value(
-                     code, InfoTitles()).titles.values().join(" ");
+                     const InfoTitles &infoTitles = manager->m_mainCodeToOtherInfos.value(code, InfoTitles());
+                     auto it = infoTitles.langTitle.find("fr");
+                     if (it == infoTitles.langTitle.end())
+                     {
+                         it = infoTitles.langTitle.find("en");
+                     }
+                     if (it == infoTitles.langTitle.end())
+                     {
+                         if (infoTitles.langTitle.size() > 0)
+                         {
+                             it = infoTitles.langTitle.begin();
+                         }
+                         else
+                         {
+                             return QString{};
+                         }
+                     }
+                     return it.value();
                 }}
                ,{COL_DATE, [](
                 const InventoryManager *, const QString &, const QDate &date,
@@ -717,7 +753,11 @@ void InventoryManager::addAmazonReturnFile(
 }
 //----------------------------------------------------------
 void InventoryManager::recordMovement(
-        const QString &code, const QString &title, int unit, const QDate &date)
+        const QString &code,
+        const QString &title,
+        const QString &lang,
+        int unit,
+        const QDate &date)
 {
     if (code == "SHOE-INSERTS-BEIGE-X5") {
         int TEMP=10;++TEMP;
@@ -728,8 +768,9 @@ void InventoryManager::recordMovement(
     //} else if (ManagerBundle::instance()->isBundle(mainCode)) {
     if (ManagerBundle::instance()->isBundle(mainCode)) {
         auto codeUnits = ManagerBundle::instance()->codesBase(mainCode);
-        for (auto codeUnit : codeUnits) {
-            recordMovement(codeUnit.first, title, codeUnit.second, date);
+        for (auto codeUnit : codeUnits)
+        {
+            recordMovement(codeUnit.first, title, lang, codeUnit.second, date);
         }
     } else {
         // TODO rec or change code if needed
@@ -741,6 +782,7 @@ void InventoryManager::recordMovement(
             codefound = true;
         }
         m_mainCodeToOtherInfos[mainCode].titles << title;
+        m_mainCodeToOtherInfos[mainCode].langTitle[lang] = title;
         if (m_inventoryBeginYear.contains(year)) {
             if (m_inventoryBeginYear[year].contains(mainCode)) {
                 codefound = true;
@@ -845,6 +887,7 @@ void InventoryManager::refresh(int year)
         m_valuesTable.clear();
         endRemoveRows();
     }
+    int indColTitle = indexColumn(COL_TITLES);
     auto colInfos = _colInfos();
     int nCols = colInfos->size();
     bool purchasesDone = m_purchases.contains(year);
@@ -862,7 +905,10 @@ void InventoryManager::refresh(int year)
                     elements << colInfos->value(col).getValue(
                                 this, code, dateBegin, *itList, infoTotals);
                 }
-                m_valuesTable << elements;
+                if (!elements[indColTitle].isEmpty()) // It means no sales / no new purchases
+                {
+                    m_valuesTable << elements;
+                }
             }
             if (purchasesDone && m_purchases[year].contains(code)) {
                 for (auto itPur = m_purchases[year][code].begin();

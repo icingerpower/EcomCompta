@@ -288,6 +288,80 @@ QList<QStringList> Order::reportCombinationMissing() const
     return possibleCombination;
 }
 //==========================================================
+QString Order::getLangCode() const
+{
+    if (m_subchannel.endsWith(".fr"))
+    {
+        return "fr";
+    }
+    else if (m_subchannel.endsWith(".be"))
+    {
+        return "fr";
+    }
+    else if (m_subchannel.endsWith(".tr"))
+    {
+        return "tr";
+    }
+    else if (m_subchannel.endsWith(".sg"))
+    {
+        return "en";
+    }
+    else if (m_subchannel.endsWith(".uk"))
+    {
+        return "en";
+    }
+    else if (m_subchannel.endsWith(".com"))
+    {
+        return "en";
+    }
+    else if (m_subchannel.endsWith(".ca"))
+    {
+        return "en";
+    }
+    else if (m_subchannel.endsWith(".au"))
+    {
+        return "en";
+    }
+    else if (m_subchannel.endsWith(".it"))
+    {
+        return "it";
+    }
+    else if (m_subchannel.endsWith(".de"))
+    {
+        return "de";
+    }
+    else if (m_subchannel.endsWith(".es"))
+    {
+        return "es";
+    }
+    else if (m_subchannel.endsWith(".mx"))
+    {
+        return "es";
+    }
+    else if (m_subchannel.endsWith(".jp"))
+    {
+        return "jp";
+    }
+    else if (m_subchannel.endsWith(".se"))
+    {
+        return "se";
+    }
+    else if (m_subchannel.endsWith(".nl"))
+    {
+        return "nl";
+    }
+    else if (m_subchannel.endsWith(".pl"))
+    {
+        return "pl";
+    }
+    else if (m_subchannel.isEmpty())
+    {
+        return "fr";
+    }
+    Q_ASSERT(false);
+    return QString{};
+}
+//==========================================================
 QDateTime Order::getDateTime() const
 {
     return m_dateTime;

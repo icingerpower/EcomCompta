@@ -16,12 +16,15 @@ QWidget *CountryItemDelegate::createEditor(
         const QModelIndex &index) const
 {
     QWidget *widget = nullptr;
-    if (index.column() == 1) {
+    if (index.column() == 1)
+    {
         QComboBox *comboBox = new QComboBox(parent);
         comboBox->addItems(*SettingManager::countriesUEfrom2020());
         widget = comboBox;
-    } else {
-        widget =  QAbstractItemDelegate::createEditor(
+    }
+    else
+    {
+        widget =  QStyledItemDelegate::createEditor(
                     parent, option, index);
     }
     return widget;
@@ -30,7 +33,8 @@ QWidget *CountryItemDelegate::createEditor(
 void CountryItemDelegate::setEditorData(
         QWidget *editor, const QModelIndex &index) const
 {
-    if (index.column() == 1) {
+    if (index.column() == 1)
+    {
         QComboBox *comboBox = static_cast<QComboBox *>(editor);
         QString country = index.data().toString();
         comboBox->setCurrentText(country);

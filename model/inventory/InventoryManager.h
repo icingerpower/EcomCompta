@@ -43,6 +43,7 @@ public:
     void addMergingCodeFile(const QString filePath);
     void recordMovement(const QString &code,
                         const QString &title,
+                        const QString &lang,
                         int unit,
                         const QDate &date);
     double valueUnitAverage(const QString &sku) const;
@@ -91,6 +92,7 @@ private:
         QSet<QString> titles;
         QString parent;
         QSet<QString> otherCodes;
+        QHash<QString, QString> langTitle;
     };
     struct InfoTotals{
         int unitsSold;

@@ -14,6 +14,7 @@
 #include "model/CustomerManager.h"
 #include "model/SettingManager.h"
 #include "model/orderimporters/Shipment.h"
+#include "model/orderimporters/Order.h"
 #include "model/orderimporters/VatOrdersModel.h"
 #include "model/orderimporters/ImporterYearsManager.h"
 #include "model/inventory/InventoryManager.h"
@@ -406,12 +407,14 @@ void PaneInventory::loadInventory()
         VatOrdersModel::instance()->computeVat(
                     year,
                     [](const Shipment *shipment){
-            if (!shipment->isRefund()) {
+            if (!shipment->isRefund())
+            {
                 QDate date = shipment->getDateTime().date();
                 for (auto article : shipment->getArticlesShipped()) {
                     InventoryManager::instance()->recordMovement(
                                 article->getSku(),
                                 article->getName(),
+                                shipment->getOrder()->getLangCode(),
                                 article->getUnits(),
                                 date);
                 }
