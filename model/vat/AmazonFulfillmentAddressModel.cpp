@@ -301,6 +301,8 @@ bool AmazonFulfillmentAddressModel::setData(
 void AmazonFulfillmentAddressModel::_loadKnownCenters()
 {
     // TODO get country of unavailable fulfillment centers from VAT report
+    m_addresses << Address::fromFbaInfos("EMA4","FR","","");
+    m_centersByCode["EMA4"] = m_addresses.last();
     m_addresses << Address::fromFbaInfos("OVD1","ES","","");
     m_centersByCode["OVD1"] = m_addresses.last();
     m_addresses << Address::fromFbaInfos("PAD2","DE","","");
