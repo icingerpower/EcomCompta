@@ -1,4 +1,5 @@
 #include <QInputDialog>
+#include <QMessageBox>
 #include <QFileDialog>
 #include <QSettings>
 
@@ -113,6 +114,13 @@ void PaneLastSales::compute()
                     amazons,
                     ui->dateEditFrom->date(),
                     ui->dateEditTo->date());
+        ui->tableSales->setModel(salesModel);
+    }
+    else
+    {
+        QMessageBox::information(this,
+                                 tr("Pas de groupe sélectionné"),
+                                 tr("Vous devez sélectionner un groupe."));
     }
     setCursor(Qt::ArrowCursor);
 }
@@ -136,7 +144,8 @@ void PaneLastSales::exportCsv()
             if (!filePath.toLower().endsWith(".csv")) {
                 filePath += ".csv";
             }
-            salesModel->exportCsv(filePath);
+            settings.setValue(key, QFileInfo{filePath}.dir().path());
+            salesModel->exportCsv(filePath, ui->lineEditGsprFolder->text());
         }
     }
 }

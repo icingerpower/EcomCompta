@@ -146,6 +146,7 @@ QSet<QString> SaleGroups::getAmazons(
         amazons.insert("amazon.se");
         amazons.insert("amazon.pl");
     }
+    return amazons;
 }
 
 QStringList SaleGroups::getKeywordsSkus(const QModelIndex &index) const

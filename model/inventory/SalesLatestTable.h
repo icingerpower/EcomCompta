@@ -16,7 +16,7 @@ public:
             const QString &lang,
             int unit);
     void compute(QSet<QString> keywordSkus, QSet<QString> subChannels, const QDate &dateFrom, const QDate &dateTo);
-    void exportCsv(const QString &filePath);
+    void exportCsv(const QString &filePath, const QString &gsprDir);
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     // Basic functionality:
@@ -25,6 +25,10 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+    QHash<QString, QStringList> getGsprData(
+        const QString &dirPath, const QStringList &colNames);
+
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
     void sort(
             int column,
             Qt::SortOrder order = Qt::AscendingOrder) override;
@@ -45,6 +49,7 @@ private:
 
     QHash<QString, ArticleInfo> m_articleInfos;
     QStringList m_codesSorted;
+    int m_indColSku;
 };
 
 #endif // SALESLATESTTABLE_H

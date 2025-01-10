@@ -399,7 +399,7 @@ void PaneBookKeeping::loadYearSelected()
         } catch (const ExceptionAccountDeportedMissing &exception) {
             QMessageBox::warning(
                         this,
-                        tr("Account missing"),
+                        tr("Deported Account missing"),
                         exception.error());
         }
         setCursor(Qt::ArrowCursor);

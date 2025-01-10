@@ -56,10 +56,11 @@ void EntryParserAmazonOrdersMonthly::recordTransactions(
                     = QMap<QString, QMap<QString, QMultiMap<QString, PriceInfos>>>();
         }
         QString country = shipmentOrRefund->getCountryNameVat();
-        if (country == "" && regime == Shipment::VAT_REGIME_NORMAL_EXPORT) {
+        auto vatRates = shipmentOrRefund->getTotalPriceTaxesByVatRateConverted().keys();
+        if (country == "Royaume-Uni de Grande-Bretagne et d'Irlande du Nord" && regime == Shipment::VAT_REGIME_NONE
+            && vatRates.contains("0.20")) {
             int TEMP=10;++TEMP;
         }
-        auto vatRates = shipmentOrRefund->getTotalPriceTaxesByVatRateConverted().keys();
         auto pricesConverted
                 = shipmentOrRefund->getTotalPriceTaxesByVatRateConverted();
         for (auto itSaleType=pricesConverted.begin();

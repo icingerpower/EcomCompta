@@ -342,7 +342,10 @@ ManagerAccountsSales::Accounts ManagerAccountsSales::getAccounts(
     if (regime == Shipment::VAT_REGIME_NONE
         && (countryCode == CountryManager::EU
             || CountryManager::instance()->countriesCodeUE()->contains(countryCode))) {
-        countryName = CountryManager::EU;
+        if (countryCode != "GB")
+        {
+            countryName = CountryManager::EU;
+        }
     }
     if (!m_mapping[regime].contains(countryName)) {
         if (regime == Shipment::VAT_REGIME_NONE
@@ -353,6 +356,10 @@ ManagerAccountsSales::Accounts ManagerAccountsSales::getAccounts(
     if (countryName == "France" && vatRate.contains(".2")) {
         int TEMP=10;++TEMP;
     }
+    bool ok1 = m_mapping.contains(regime);
+    bool ok2 = m_mapping[regime].contains(countryName);
+    bool ok3 = m_mapping[regime][countryName].contains(saleType);
+    bool ok4 = m_mapping[regime][countryName][saleType].contains(vatRate);
     if (!m_mapping.contains(regime)
             || !m_mapping[regime].contains(countryName)
             || !m_mapping[regime][countryName].contains(saleType)
