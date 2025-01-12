@@ -3,9 +3,10 @@
 #include <QFileDialog>
 #include <QSettings>
 
-#include "gui/panes/itemdelegates/SaleGroupsDelegate.h"
+#include "gui/panes/dialogs/DialogEditSalesTemplate.h"
 
 #include "model/inventory/SaleGroups.h"
+#include "model/inventory/SaleTemplateManager.h"
 #include "model/inventory/SalesLatestTable.h"
 
 #include "PaneLastSales.h"
@@ -19,8 +20,6 @@ PaneLastSales::PaneLastSales(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->tableViewGroups->setModel(SaleGroups::instance());
-    //ui->tableViewGroups->setItemDelegate(
-                //new SaleGroupsDelegate{ui->tableViewGroups});
     m_updatingTextEditGroup = false;
     QSettings settings;
     ui->lineEditGsprFolder->setText(
@@ -29,11 +28,16 @@ PaneLastSales::PaneLastSales(QWidget *parent) :
 
     ui->dateEditFrom->setDate(QDate::currentDate().addMonths(-1));
     ui->dateEditTo->setDate(QDate::currentDate());
+    ui->comboBoxTemplates->setModel(SaleTemplateManager::instance());
     _connectSlots();
 }
 
 void PaneLastSales::_connectSlots()
 {
+    connect(ui->buttonEditTemplates,
+            &QPushButton::clicked,
+            this,
+            &PaneLastSales::editTemplates);
     connect(ui->buttonAddGroup,
             &QPushButton::clicked,
             this,
@@ -67,6 +71,12 @@ void PaneLastSales::_connectSlots()
 PaneLastSales::~PaneLastSales()
 {
     delete ui;
+}
+
+void PaneLastSales::editTemplates()
+{
+    DialogEditSalesTemplate dialog;
+    dialog.exec();
 }
 
 void PaneLastSales::addGroup()

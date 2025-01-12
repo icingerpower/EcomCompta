@@ -90,14 +90,14 @@ void VatOrdersModel::computeVat(
         QString importerName = importer->name();
         auto reportTypes = importer->reportTypes();
         for (auto reportType : qAsConst(reportTypes)) {
-            for (auto yearPrevious : previousYears)
+            for (const auto &yearPrevious : previousYears)
             {
                 auto filePaths
                     = ImportedFileReportManager::instance()->filePaths(
                         importerName, reportType.shortName, yearPrevious); /// For previous year order with current year refund
                 filePaths += ImportedFileReportManager::instance()->filePaths(
                     importerName, reportType.shortName, year);
-                for (auto filePath : qAsConst(filePaths)) {
+                for (const auto &filePath : qAsConst(filePaths)) {
                     auto currentOrders = importer->loadReport(
                         reportType.shortName, filePath, year);
                     m_orderManager->recordOrders(importerName, *currentOrders.data());

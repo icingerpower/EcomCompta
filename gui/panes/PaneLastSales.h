@@ -17,6 +17,7 @@ public:
     ~PaneLastSales();
 
 public slots:
+    void editTemplates();
     void addGroup();
     void removeGroupSelected();
     void compute();

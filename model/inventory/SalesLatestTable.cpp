@@ -171,32 +171,40 @@ void SalesLatestTable::compute(
 {
     Q_ASSERT(dateFrom < dateTo);
     _clear();
-    int year = dateTo.year();
-    VatOrdersModel::instance()->computeVat(
-                year,
-                [this, dateFrom, dateTo, subChannels, keywordSkus](
-                const Shipment *shipment){
-        if (!shipment->isRefund() && subChannels.contains(shipment->subchannel()))
-        {
-            QDate date = shipment->getOrder()->getDateTime().date();
-            if (date >= dateFrom && date <= dateTo)
-            {
-                for (auto &article : shipment->getArticlesShipped()) {
-                    recordMovement(
-                                article->getSku(),
-                                article->getName(),
-                                shipment->getOrder()->getLangCode(),
-                                article->getUnits());
-                }
+    int yearFrom = dateFrom.year();
+    int yearTo = dateTo.year();
+    for (int year = yearFrom; year <= yearTo; ++year)
+    {
+        VatOrdersModel::instance()->computeVat(
+                    year,
+                    [this](
+                    const Shipment *shipment){
+            for (auto &article : shipment->getArticlesShipped()) {
+                recordMovement(
+                            article->getSku(),
+                            article->getName(),
+                            shipment->getOrder()->getLangCode(),
+                            article->getUnits());
             }
         }
+        , QString{}
+        , QString{}
+        , [dateFrom, dateTo, subChannels, keywordSkus](
+        const Shipment *shipment) -> bool {
+            if (shipment->getOrder() != nullptr
+                    && !shipment->isRefund()
+                    && subChannels.contains(shipment->subchannel()))
+            {
+                QDate date = shipment->getOrder()->getDateTime().date();
+                if (date >= dateFrom && date <= dateTo)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        );
     }
-    , QString{}
-    , QString{}
-    , [](const Shipment *shipment) -> bool {
-        return shipment->getOrder() != nullptr;
-    }
-    );
 
     QSet<QString> codeToRemove;
     QStringList codesSorted;

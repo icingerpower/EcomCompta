@@ -16,6 +16,7 @@ FORMS += \
     $$PWD/DialogDiffVatAmazonUe.ui \
     $$PWD/DialogDisplayOrdersMissingReports.ui \
     $$PWD/DialogDisplayUncompleteOrders.ui \
+    $$PWD/DialogEditSalesTemplate.ui \
     $$PWD/DialogFbaAddress.ui \
     $$PWD/DialogNewCustomer.ui \
     $$PWD/DialogOtherVatRates.ui
@@ -38,6 +39,7 @@ HEADERS += \
     $$PWD/DialogDiffVatAmazonUe.h \
     $$PWD/DialogDisplayOrdersMissingReports.h \
     $$PWD/DialogDisplayUncompleteOrders.h \
+    $$PWD/DialogEditSalesTemplate.h \
     $$PWD/DialogFbaAddress.h \
     $$PWD/DialogNewCustomer.h \
     $$PWD/DialogOtherVatRates.h
@@ -60,6 +62,7 @@ SOURCES += \
     $$PWD/DialogDiffVatAmazonUe.cpp \
     $$PWD/DialogDisplayOrdersMissingReports.cpp \
     $$PWD/DialogDisplayUncompleteOrders.cpp \
+    $$PWD/DialogEditSalesTemplate.cpp \
     $$PWD/DialogFbaAddress.cpp \
     $$PWD/DialogNewCustomer.cpp \
     $$PWD/DialogOtherVatRates.cpp
