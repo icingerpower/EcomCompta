@@ -98,35 +98,117 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>Dossier GSPR</string>
+            <string>Economics folder</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEditGsprFolder">
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
+          <widget class="QLineEdit" name="lineEditEconomicsFolder"/>
          </item>
          <item>
-          <widget class="QPushButton" name="buttonBrowseGsprFolder">
+          <widget class="QPushButton" name="buttonBrowseEconomicsFolder">
            <property name="text">
             <string>Choisir</string>
            </property>
           </widget>
          </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QComboBox" name="comboBoxTemplates"/>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>Dossier GSPR</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="buttonAddFolder">
+               <property name="toolTip">
+                <string>Ajouter un dossier</string>
+               </property>
+               <property name="text">
+                <string>Ajouter</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="buttonRemoveFolder">
+               <property name="toolTip">
+                <string>Ajouter un dossier</string>
+               </property>
+               <property name="text">
+                <string>Supprimer</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QListView" name="listViewCsvOrderFolders">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>80</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QPushButton" name="buttonEditTemplates">
-           <property name="text">
-            <string>Edit template</string>
-           </property>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QComboBox" name="comboBoxTemplates"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="buttonEditTemplates">
+               <property name="text">
+                <string>Edit template</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Maximum</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>

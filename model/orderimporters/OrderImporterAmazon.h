@@ -17,6 +17,8 @@ public:
     static const QString REPORT_ORDERS_PAYMENTS;
     static const QString REPORT_ORDERS_INVOICING;
     static const QString REPORT_ORDERS_INVOICING_SHORT;
+    static const QString REPORT_ECONOMICS;
+    static const QString REPORT_ECONOMICS_SHORT;
     OrderImporterAmazon();
     ~OrderImporterAmazon() override;
     QString name() const override;

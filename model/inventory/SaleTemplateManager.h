@@ -12,6 +12,7 @@ class SaleTemplateManager : public QAbstractListModel, public UpdateToCustomer
 public:
     static SaleTemplateManager *instance();
     const QString &getId(const QModelIndex &index) const;
+    const QString &getId(int rowIndex) const;
     void add(const QString &name);
     void remove(const QModelIndex &index);
 

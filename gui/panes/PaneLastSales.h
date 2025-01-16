@@ -23,6 +23,8 @@ public slots:
     void compute();
     void exportCsv();
     void browseGsprFolder();
+    void browseEconomicsFolder();
+    void removeFolder();
 
 private slots:
     void onGroupKeywordsEdited();
@@ -33,7 +35,7 @@ private:
     Ui::PaneLastSales *ui;
     void _connectSlots();
     bool m_updatingTextEditGroup;
-    static const QString SETTING_DIR_GSPR_FILES;
+    static const QString SETTING_DIR_ECONOMICS;
 };
 
 #endif // PANELASTSALES_H

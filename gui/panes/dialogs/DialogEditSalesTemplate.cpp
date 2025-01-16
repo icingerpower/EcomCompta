@@ -188,7 +188,7 @@ void DialogEditSalesTemplate::onTemplateSelected(
         const QString &idTemplate = SaleTemplateManager::instance()
                 ->getId(newSelection.indexes().first());
         const QString &idTree
-                = idTemplate + "_" + CustomerManager::instance()->getSelectedCustomerId();
+            = SaleColumnTree::createId(idTemplate);
         auto saleTreeColumn = new SaleColumnTree{idTree, ui->treeViewColumns};
         ui->treeViewColumns->setModel(saleTreeColumn);
         ui->widgetMenuRight->setEnabled(true);

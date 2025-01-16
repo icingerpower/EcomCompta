@@ -10,9 +10,20 @@ class SaleColumnTree : public QAbstractItemModel
     Q_OBJECT
 
 public:
+    static const QString COL_SKU;
+    static const QString COL_UNIT_PRICE;
+    static const QString COL_UNIT_WEIGHT;
+    static const QStringList COL_NAMES_STANDARD;
     explicit SaleColumnTree(const QString &id, QObject *parent = nullptr);
     ~SaleColumnTree() override;
+    static QString createId(const QString &templateId);
 
+    int getColIndUnitWeight() const;
+    int getColIndUnitPrice() const;
+
+    bool containsColumn(const QString &name) const;
+    QStringList getHeader() const;
+    QHash<QString, QSet<QString>> getGolNamesTree() const;
     void addItem(const QModelIndex &parent, const QString &name);
     void upItem(const QModelIndex &itemIndex);
     void downItem(const QModelIndex &itemIndex);

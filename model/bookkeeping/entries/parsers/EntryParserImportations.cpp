@@ -1,4 +1,3 @@
-#include "../common/currencies/CurrencyRateManager.h"
 #include "../common/countries/CountryManager.h"
 #include "../common/utils/FileUtils.h"
 

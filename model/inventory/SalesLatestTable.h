@@ -3,6 +3,8 @@
 
 #include <QAbstractTableModel>
 
+class SaleColumnTree;
+
 class SalesLatestTable : public QAbstractTableModel
 {
     Q_OBJECT
@@ -15,8 +17,15 @@ public:
             const QString &title,
             const QString &lang,
             int unit);
-    void compute(QSet<QString> keywordSkus, QSet<QString> subChannels, const QDate &dateFrom, const QDate &dateTo);
-    void exportCsv(const QString &filePath, const QString &gsprDir);
+    void compute(
+        QSet<QString> keywordSkus,
+        QSet<QString> subChannels,
+        const QDate &dateFrom,
+        const QDate &dateTo);
+    void exportCsv(const QString &filePath,
+                   SaleColumnTree *saleColumnTree,
+                   const QString &dirEconomics,
+                   const QDate &minDate);
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     // Basic functionality:
@@ -24,9 +33,6 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-
-    QHash<QString, QStringList> getGsprData(
-        const QString &dirPath, const QStringList &colNames);
 
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     void sort(

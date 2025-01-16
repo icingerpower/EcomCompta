@@ -1,17 +1,26 @@
 #include <QSettings>
+#include <QDebug>
 
 #include "model/SettingManager.h"
+#include "model/CustomerManager.h"
 
 #include "SaleColumnTreeItem.h"
 
 #include "SaleColumnTree.h"
 
+const QString SaleColumnTree::COL_SKU{"SKU"};
+const QString SaleColumnTree::COL_UNIT_PRICE{"Unit price"};
+const QString SaleColumnTree::COL_UNIT_WEIGHT{"Unit weight"};
+const QStringList SaleColumnTree::COL_NAMES_STANDARD{COL_SKU, COL_UNIT_PRICE, COL_UNIT_WEIGHT};
 
 SaleColumnTree::SaleColumnTree(const QString &id, QObject *parent)
     : QAbstractItemModel(parent)
 {
     m_settingsKey = "SaleColumnTree_" + id;
-    m_rootItem = nullptr;
+    m_rootItem = new SaleColumnTreeItem;
+    new SaleColumnTreeItem{COL_SKU, m_rootItem};
+    new SaleColumnTreeItem{COL_UNIT_PRICE, m_rootItem};
+    new SaleColumnTreeItem{COL_UNIT_WEIGHT, m_rootItem};
     loadFromSettings();
 }
 
@@ -19,7 +28,7 @@ void SaleColumnTree::_clear()
 {
     if (m_rootItem != nullptr)
     {
-        beginRemoveRows(QModelIndex(), 0, rowCount()-1);
+        beginRemoveRows(QModelIndex(), 0, m_rootItem->rowCount());
         delete m_rootItem;
         m_rootItem = new SaleColumnTreeItem;
         endRemoveRows();
@@ -97,19 +106,101 @@ SaleColumnTree::~SaleColumnTree()
     delete m_rootItem;
 }
 
-void SaleColumnTree::addItem(
-        const QModelIndex &parent, const QString &name)
+QString SaleColumnTree::createId(const QString &templateId)
 {
-    SaleColumnTreeItem *itemParent = m_rootItem;
-    if (parent.isValid())
+    return templateId + "-" + CustomerManager::instance()->getSelectedCustomerId();
+}
+
+int SaleColumnTree::getColIndUnitWeight() const
+{
+    int index = 0;
+    for (const auto &item : m_rootItem->children())
     {
-        itemParent = static_cast<SaleColumnTreeItem *>(
-                    parent.internalPointer());
+        if (item->name().compare(COL_UNIT_WEIGHT, Qt::CaseInsensitive) == 0)
+        {
+            return index;
+        }
+        ++index;
     }
-    beginInsertRows(parent, itemParent->rowCount(), itemParent->rowCount());
-    new SaleColumnTreeItem{name, itemParent};
-    saveInSettings();
-    endInsertRows();
+    return -1;
+}
+
+int SaleColumnTree::getColIndUnitPrice() const
+{
+    int index = 0;
+    for (const auto &item : m_rootItem->children())
+    {
+        if (item->name().compare(COL_UNIT_PRICE, Qt::CaseInsensitive) == 0)
+        {
+            return index;
+        }
+        ++index;
+    }
+    return -1;
+}
+
+bool SaleColumnTree::containsColumn(const QString &name) const
+{
+    for (const auto &item : m_rootItem->children())
+    {
+        if (item->name().compare(name, Qt::CaseInsensitive) == 0)
+        {
+            return true;
+        }
+        for (const auto &subItem : item->children())
+        {
+            if (subItem->name().compare(name, Qt::CaseInsensitive) == 0)
+            {
+                return true;
+            }
+        }
+    }
+    return true;
+}
+
+QStringList SaleColumnTree::getHeader() const
+{
+    QStringList header;
+    for (const auto &item : m_rootItem->children())
+    {
+        header << item->name().toLower();
+    }
+    return header;
+}
+
+QHash<QString, QSet<QString> > SaleColumnTree::getGolNamesTree() const
+{
+    QHash<QString, QSet<QString> > colNames;
+    for (const auto &item : m_rootItem->children())
+    {
+        for (const auto &subItem : item->children())
+        {
+            colNames[item->name()] << subItem->name();
+        }
+    }
+    return colNames;
+}
+
+void SaleColumnTree::addItem(
+    const QModelIndex &parent, const QString &name)
+{
+    if (!COL_NAMES_STANDARD.contains(name))
+    {
+        SaleColumnTreeItem *itemParent = m_rootItem;
+        if (parent.isValid())
+        {
+            itemParent = static_cast<SaleColumnTreeItem *>(
+                parent.internalPointer());
+        }
+        beginInsertRows(parent, itemParent->rowCount(), itemParent->rowCount());
+        new SaleColumnTreeItem{name, itemParent};
+        saveInSettings();
+        endInsertRows();
+    }
+    else
+    {
+        qWarning() << "No item can be named as the default item";
+    }
 }
 
 void SaleColumnTree::upItem(const QModelIndex &itemIndex)
@@ -119,7 +210,7 @@ void SaleColumnTree::upItem(const QModelIndex &itemIndex)
     if (parentIndex.isValid())
     {
         parent = static_cast<SaleColumnTreeItem *>(
-                    parentIndex.internalPointer());
+            parentIndex.internalPointer());
     }
     else
     {
@@ -140,7 +231,7 @@ void SaleColumnTree::downItem(const QModelIndex &itemIndex)
     if (parentIndex.isValid())
     {
         parent = static_cast<SaleColumnTreeItem *>(
-                    parentIndex.internalPointer());
+            parentIndex.internalPointer());
     }
     else
     {
@@ -160,13 +251,27 @@ void SaleColumnTree::removeItem(const QModelIndex &itemIndex)
     SaleColumnTreeItem *child
             = static_cast<SaleColumnTreeItem *>(
                 itemIndex.internalPointer());
-    SaleColumnTreeItem *parent
-            = static_cast<SaleColumnTreeItem *>(
+    if (!COL_NAMES_STANDARD.contains(child->name()))
+    {
+        SaleColumnTreeItem *parent = nullptr;
+        if (child->isTopItem())
+        {
+            parent = m_rootItem;
+        }
+        else
+        {
+            parent = static_cast<SaleColumnTreeItem *>(
                 parentIndex.internalPointer());
-    beginRemoveRows(parentIndex, child->row(), child->row());
-    parent->remove(child->row());
-    saveInSettings();
-    endRemoveRows();
+        }
+        beginRemoveRows(parentIndex, child->row(), child->row());
+        parent->remove(child->row());
+        saveInSettings();
+        endRemoveRows();
+    }
+    else
+    {
+        qWarning() << "The default items can't be removed";
+    }
 }
 
 QVariant SaleColumnTree::headerData(

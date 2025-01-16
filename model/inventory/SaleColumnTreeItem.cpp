@@ -73,6 +73,11 @@ QVariant SaleColumnTreeItem::data(int column) const
     return m_values[column];
 }
 
+QString SaleColumnTreeItem::name() const
+{
+    return m_values[0].toString();
+}
+
 void SaleColumnTreeItem::setName(const QString &name)
 {
     m_values[0] = name;

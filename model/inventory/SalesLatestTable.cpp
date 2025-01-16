@@ -6,6 +6,8 @@
 #include "model/orderimporters/VatOrdersModel.h"
 #include "model/orderimporters/Shipment.h"
 #include "model/orderimporters/Order.h"
+#include "model/inventory/CsvOrderFolders.h"
+#include "model/inventory/SaleColumnTree.h"
 
 #include "SalesLatestTable.h"
 
@@ -94,52 +96,6 @@ QVariant SalesLatestTable::data(
         return m_colInfos[index.column()].value(m_codesSorted[index.row()]);
     }
     return QVariant();
-}
-
-QHash<QString, QStringList> SalesLatestTable::getGsprData(
-    const QString &dirPath, const QStringList &colNames)
-{
-    QHash<QString, QStringList> gsprData;
-    auto gsprFiles = QDir{dirPath}.entryInfoList(
-        QStringList{"*-GSPR.csv"}, QDir::Files);
-    QStringList colNamesFound = colNames;
-    for (const auto &gsprFile : qAsConst(gsprFiles))
-    {
-        QFile file(gsprFile.absoluteFilePath());
-        if (file.open(QFile::ReadOnly))
-        {
-            QTextStream stream{&file};
-            auto lines = stream.readAll().split("\n");
-            auto header = lines.takeFirst().split("\t");
-            QHash<QString, int> headerIndex;
-            for (int i=0; i<header.size(); ++i)
-            {
-                headerIndex[header[i]] = i;
-            }
-            Q_ASSERT(headerIndex.contains("SKU"));
-            int colIndSku = headerIndex["SKU"];
-            for (const auto &colName : colNames)
-            {
-                if (headerIndex.contains(colName))
-                {
-                    colNamesFound << colName;
-                }
-            }
-            for (const auto &line : qAsConst(lines))
-            {
-                const auto &elements = line.split("\t");
-                const auto &sku = elements[colIndSku];
-                if (!gsprData.contains(sku) && !sku.isEmpty() && elements.size() >= headerIndex.size())
-                {
-                    for (const auto &colName : qAsConst(colNamesFound))
-                    {
-                        gsprData[sku] << elements[headerIndex[colName]];
-                    }
-                }
-            }
-        }
-    }
-    return gsprData;
 }
 
 Qt::ItemFlags SalesLatestTable::flags(const QModelIndex &) const
@@ -251,11 +207,15 @@ void SalesLatestTable::compute(
     endInsertRows();
 }
 
-void SalesLatestTable::exportCsv(const QString &filePath, const QString &gsprDir)
+void SalesLatestTable::exportCsv(
+    const QString &filePath,
+    SaleColumnTree *saleColumnTree,
+    const QString &dirEconomics,
+    const QDate &minDate)
 {
     QFile file(filePath);
-    QStringList colNames{"Country", "Manufacturer", "EC REP"};
-    const auto &gsprData = getGsprData(gsprDir, colNames);
+    //QStringList colNames{"Country", "Manufacturer", "EC REP"};
+    auto gsprData = CsvOrderFolders::instance()->getGsprData(saleColumnTree);
     if (file.open(QFile::WriteOnly))
     {
         QString colSep{"\t"};
@@ -267,7 +227,19 @@ void SalesLatestTable::exportCsv(const QString &filePath, const QString &gsprDir
         {
             header << headerData(i, Qt::Horizontal).toString();
         }
-        header << colNames;
+        //header << colNames;
+        header << saleColumnTree->getHeader();
+        int indColWeight = saleColumnTree->getColIndUnitWeight();
+        int indColUnitPrice = saleColumnTree->getColIndUnitPrice();
+        double shippingPricePerKilo = 3.;
+        CsvOrderFolders::instance()->addEconomicsData(
+            dirEconomics,
+            minDate,
+            indColUnitPrice,
+            indColWeight,
+            shippingPricePerKilo,
+            header,
+            gsprData);
         stream << header.join(colSep);
         for (int i=0; i<nRows; ++i)
         {

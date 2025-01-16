@@ -3,16 +3,22 @@
 #include <QFileDialog>
 #include <QSettings>
 
+#include "../common/utils/CsvHeader.h"
+
 #include "gui/panes/dialogs/DialogEditSalesTemplate.h"
 
+#include "model/SettingManager.h"
 #include "model/inventory/SaleGroups.h"
 #include "model/inventory/SaleTemplateManager.h"
 #include "model/inventory/SalesLatestTable.h"
+#include "model/inventory/CsvOrderFolders.h"
+#include "model/inventory/SaleColumnTree.h"
 
 #include "PaneLastSales.h"
 #include "ui_PaneLastSales.h"
 
-const QString PaneLastSales::SETTING_DIR_GSPR_FILES{"PaneLastSales__GSPRdir"};
+
+const QString PaneLastSales::SETTING_DIR_ECONOMICS{"PaneLastSales_dir_economics"};
 
 PaneLastSales::PaneLastSales(QWidget *parent) :
     QWidget(parent),
@@ -20,15 +26,17 @@ PaneLastSales::PaneLastSales(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->tableViewGroups->setModel(SaleGroups::instance());
+    ui->listViewCsvOrderFolders->setModel(CsvOrderFolders::instance());
     m_updatingTextEditGroup = false;
-    QSettings settings;
-    ui->lineEditGsprFolder->setText(
-                settings.value(
-                    SETTING_DIR_GSPR_FILES, QString{}).toString());
 
     ui->dateEditFrom->setDate(QDate::currentDate().addMonths(-1));
     ui->dateEditTo->setDate(QDate::currentDate());
     ui->comboBoxTemplates->setModel(SaleTemplateManager::instance());
+
+        QSettings settingsCommon(SettingManager::instance()->settingsFilePath(),
+                           QSettings::IniFormat);
+    ui->lineEditEconomicsFolder->setText(
+            settingsCommon.value(SETTING_DIR_ECONOMICS).toString());
     _connectSlots();
 }
 
@@ -54,10 +62,18 @@ void PaneLastSales::_connectSlots()
             &QItemSelectionModel::selectionChanged,
             this,
             &PaneLastSales::onGroupSelected);
-    connect(ui->buttonBrowseGsprFolder,
+    connect(ui->buttonBrowseEconomicsFolder,
+            &QPushButton::clicked,
+            this,
+            &PaneLastSales::browseEconomicsFolder);
+    connect(ui->buttonAddFolder,
             &QPushButton::clicked,
             this,
             &PaneLastSales::browseGsprFolder);
+    connect(ui->buttonRemoveFolder,
+            &QPushButton::clicked,
+            this,
+            &PaneLastSales::removeFolder);
     connect(ui->buttonCompute,
             &QPushButton::clicked,
             this,
@@ -149,13 +165,30 @@ void PaneLastSales::exportCsv()
                     this, tr("Choisir un fichier"),
                     lastDirPath,
                     "CSV (*.csv)");
-        if (!filePath.isEmpty()) {
-
-            if (!filePath.toLower().endsWith(".csv")) {
+        if (!filePath.isEmpty())
+        {
+            if (!filePath.toLower().endsWith(".csv"))
+            {
                 filePath += ".csv";
             }
+            int templateIndex = ui->comboBoxTemplates->currentIndex();
+            const auto &templateId = SaleTemplateManager::instance()->getId(templateIndex);
             settings.setValue(key, QFileInfo{filePath}.dir().path());
-            salesModel->exportCsv(filePath, ui->lineEditGsprFolder->text());
+            const QString &idTree
+                = SaleColumnTree::createId(templateId);
+            SaleColumnTree saleColumnTree{idTree};
+            const auto &minDate = ui->dateEditFrom->date();
+            const auto &dirEconomics = ui->lineEditEconomicsFolder->text();
+            try
+            {
+                salesModel->exportCsv(filePath, &saleColumnTree, dirEconomics, minDate);
+            } catch (const CsvHeaderException &exception)
+            {
+                QMessageBox::information(
+                    this,
+                    tr("Erreur format CSV"),
+                    tr("Colonnes manquantes:") + exception.columnValuesError().join(" - "));
+            }
         }
     }
 }
@@ -163,16 +196,46 @@ void PaneLastSales::exportCsv()
 void PaneLastSales::browseGsprFolder()
 {
     QSettings settings;
+    QString settingKey{"PaneLastSales__GSPRdir"};
     QString lastDirPath = settings.value(
-                SETTING_DIR_GSPR_FILES, QDir().absolutePath()).toString();
-    QString directory = QFileDialog::getExistingDirectory(
+                settingKey, QDir().absolutePath()).toString();
+    const QString &folder = QFileDialog::getExistingDirectory(
                 this, tr("Choisir un répertoire"),
                 lastDirPath);
-    if (!directory.isEmpty())
+    if (!folder.isEmpty())
     {
-        settings.setValue(SETTING_DIR_GSPR_FILES, directory);
+        settings.setValue(settingKey, folder);
+        CsvOrderFolders::instance()->add(folder);
     }
-    ui->lineEditGsprFolder->setText(directory);
+}
+
+void PaneLastSales::browseEconomicsFolder()
+{
+    QSettings settings;
+    QString settingKey{"PaneLastSales__economicsFolder"};
+    QString lastDirPath = settings.value(
+                settingKey, QDir().absolutePath()).toString();
+    const QString &folder = QFileDialog::getExistingDirectory(
+                this, tr("Choisir un répertoire"),
+                lastDirPath);
+    if (!folder.isEmpty())
+    {
+        settings.setValue(settingKey, folder);
+        ui->lineEditEconomicsFolder->setText(folder);
+        QSettings settingsCommon(SettingManager::instance()->settingsFilePath(),
+                           QSettings::IniFormat);
+        settingsCommon.setValue(SETTING_DIR_ECONOMICS, folder);
+    }
+}
+
+void PaneLastSales::removeFolder()
+{
+    const auto &selIndexes
+        = ui->listViewCsvOrderFolders->selectionModel()->selectedIndexes();
+    if (selIndexes.size() > 0)
+    {
+        CsvOrderFolders::instance()->remove(selIndexes.first());
+    }
 }
 
 void PaneLastSales::onGroupKeywordsEdited()

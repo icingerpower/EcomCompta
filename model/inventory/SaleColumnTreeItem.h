@@ -26,6 +26,7 @@ public:
     void down(int row);
     SaleColumnTreeItem *parent() const;
     QVariant data(int column) const;
+    QString name() const;
     void setName(const QString &name);
     void setData(int column, const QVariant &value);
     int rowCount() const;

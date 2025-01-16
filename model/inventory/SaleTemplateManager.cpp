@@ -73,7 +73,12 @@ SaleTemplateManager *SaleTemplateManager::instance()
 
 const QString &SaleTemplateManager::getId(const QModelIndex &index) const
 {
-    return m_listOfStringList[index.row()].last();
+    return getId(index.row());
+}
+
+const QString &SaleTemplateManager::getId(int rowIndex) const
+{
+    return m_listOfStringList[rowIndex].last();
 }
 
 void SaleTemplateManager::add(const QString &name)
