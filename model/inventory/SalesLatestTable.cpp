@@ -214,7 +214,6 @@ void SalesLatestTable::exportCsv(
     const QDate &minDate)
 {
     QFile file(filePath);
-    //QStringList colNames{"Country", "Manufacturer", "EC REP"};
     auto gsprData = CsvOrderFolders::instance()->getGsprData(saleColumnTree);
     if (file.open(QFile::WriteOnly))
     {

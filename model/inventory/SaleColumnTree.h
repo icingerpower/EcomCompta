@@ -21,7 +21,7 @@ public:
     int getColIndUnitWeight() const;
     int getColIndUnitPrice() const;
 
-    bool containsColumn(const QString &name) const;
+    QString containsColumn(const QString &name) const;
     QStringList getHeader() const;
     QHash<QString, QSet<QString>> getGolNamesTree() const;
     void addItem(const QModelIndex &parent, const QString &name);

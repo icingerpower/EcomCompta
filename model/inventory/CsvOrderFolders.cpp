@@ -47,22 +47,37 @@ QHash<QString, QStringList> CsvOrderFolders::getGsprData(
             auto lines = stream.readAll().split("\n");
             auto headerFrom = lines.takeFirst().split("\t");
             QHash<QString, int> headerFromIndex;
+            QHash<QString, int> headerFromIndexLower;
+            int colIndSku = -1;
             for (int i=0; i<headerFrom.size(); ++i)
             {
-                if (saleColumnTree->containsColumn(headerFrom[i]))
+                const QString &colNameTo = saleColumnTree->containsColumn(headerFrom[i]);
+                if (!colNameTo.isEmpty())
                 {
-                    headerFromIndex[headerFrom[i].toLower()] = i;
+                    if (colNameTo.compare("SKU", Qt::CaseInsensitive) == 0)
+                    {
+                        colIndSku = i;
+                    }
+                    headerFromIndex[colNameTo] = i;
+                    headerFromIndexLower[colNameTo.toLower()] = i;
                 }
             }
-            if (headerFromIndex.contains("sku"))
+            if (colIndSku > -1)
             {
-                int colIndSku = headerFromIndex["sku"];
+                int maxIndex = colIndSku;
+                for (const auto &colName : headerTo)
+                {
+                    if (headerFromIndex.contains(colName))
+                    {
+                        maxIndex = qMax(maxIndex, headerFromIndex[colName]);
+                    }
+                }
                 for (const auto &line : qAsConst(lines))
                 {
                     if (!line.trimmed().isEmpty())
                     {
                         const auto &elements = line.split("\t");
-                        if (elements.size() > colIndSku)
+                        if (elements.size() > maxIndex)
                         {
                             const auto &sku = elements[colIndSku];
                             if (!sku.isEmpty() && elements.size() >= headerFromIndex.size())
@@ -71,9 +86,10 @@ QHash<QString, QStringList> CsvOrderFolders::getGsprData(
                                 {
                                     for (const auto &colName : headerTo)
                                     {
-                                        if (headerFromIndex.contains(colName))
+                                        const auto &colNameLower = colName.toLower();
+                                        if (headerFromIndexLower.contains(colNameLower))
                                         {
-                                            gsprData[sku] << elements[headerFromIndex[colName]];
+                                            gsprData[sku] << elements[headerFromIndexLower[colNameLower]];
                                         }
                                         else
                                         {
@@ -86,12 +102,12 @@ QHash<QString, QStringList> CsvOrderFolders::getGsprData(
                                     for (int i=0; i<headerTo.size(); ++i)
                                     {
                                         const QString &colName = headerTo[i];
-                                        if (headerFromIndex.contains(colName) && gsprData[sku][i].isEmpty())
+                                        const auto &colNameLower = colName.toLower();
+                                        if (headerFromIndexLower.contains(colNameLower) && gsprData[sku][i].isEmpty())
                                         {
-                                            gsprData[sku][i] = elements[headerFromIndex[colName]];
+                                            gsprData[sku][i] = elements[headerFromIndexLower[colNameLower]];
                                         }
                                     }
-
                                 }
                             }
                         }
@@ -194,19 +210,19 @@ void CsvOrderFolders::addEconomicsData(
                         currency);
                     skuEconomics[sku].recordFee(
                         "Base fulfilment fee",
-                        elements[indFeesAmazonQuantity].toInt(),
+                        elements[indFeesAmazonQuantity].toDouble(),
                         elements[indFeesAmazonTotal].toDouble(),
                         dateEnd,
                         currency);
                     skuEconomics[sku].recordFee(
                         "Base monthly storage fee",
-                        elements[indFeesStorageQuantity].toInt(),
+                        elements[indFeesStorageQuantity].toDouble(),
                         elements[indFeesStorageTotal].toDouble(),
                         dateEnd,
                         currency);
                     skuEconomics[sku].recordFee(
                         "Sponsored Products charge",
-                        elements[indFeesAdsQuantity].toInt(),
+                        elements[indFeesAdsQuantity].toDouble(),
                         elements[indFeesAdsTotal].toDouble(),
                         dateEnd,
                         currency);
@@ -231,7 +247,7 @@ void CsvOrderFolders::addEconomicsData(
         gsprData[sku] << QString::number(economics.profit());
         gsprData[sku] << QString::number(economics.profitWithStorage());
         gsprData[sku] << QString::number(economics.profitWithAds());
-        gsprData[sku] << QString::number(economics.returnedRatio());
+        gsprData[sku] << QString::number(economics.returnedRatio(), 'f', 2);
         gsprData[sku] << QString::number(economics.feesAmz());
         gsprData[sku] << QString::number(economics.feesStorage());
         gsprData[sku] << QString::number(economics.feesAds());

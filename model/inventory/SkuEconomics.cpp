@@ -15,7 +15,7 @@ SkuEconomics::SkuEconomics()
 
 void SkuEconomics::recordFee(
     const QString &fee,
-    int count,
+    double count,
     double total,
     const QDate &date,
     const QString &currency)
@@ -33,11 +33,15 @@ void SkuEconomics::recordFee(
     }
     else if (fee.contains("storage", Qt::CaseInsensitive))
     {
-        m_feesAmazon.insert(fee, Fee{count, total});
+        m_feesStorage.insert(fee, Fee{count, total});
     }
     else if (fee.contains("sponsored", Qt::CaseInsensitive))
     {
-        m_feesAmazon.insert(fee, Fee{count, total});
+        m_feesAds.insert(fee, Fee{count, total});
+    }
+    else
+    {
+        m_feesOther.insert(fee, Fee{count, total});
     }
 }
 
@@ -90,8 +94,8 @@ double SkuEconomics::averageSalePriceUntaxed() const
 void SkuEconomics::recordUnitSold(
     int unitSold, int unitReturned)
 {
-    m_unitSold = unitSold;
-    m_unitReturned = unitReturned;
+    m_unitSold += unitSold;
+    m_unitReturned += unitReturned;
 }
 
 bool SkuEconomics::isUnitPriceRecorder() const
@@ -128,7 +132,7 @@ double SkuEconomics::returnedRatio() const
 
 double SkuEconomics::feesAmz() const
 {
-    int feesAmzQuantity = 0;
+    double feesAmzQuantity = 0;
     double feesAmzTotal = 0.;
     for (auto it = m_feesAmazon.begin();
          it != m_feesAmazon.end(); ++it)
@@ -145,7 +149,7 @@ double SkuEconomics::feesAmz() const
 
 double SkuEconomics::feesAds() const
 {
-    int feesAdsQuantity = 0;
+    double feesAdsQuantity = 0;
     double feesAdsTotal = 0.;
     for (auto it = m_feesStorage.begin();
          it != m_feesStorage.end(); ++it)
@@ -162,7 +166,7 @@ double SkuEconomics::feesAds() const
 
 double SkuEconomics::feesStorage() const
 {
-    int feesStorageQuantity = 0;
+    double feesStorageQuantity = 0;
     double feesStorageTotal = 0.;
     for (auto it = m_feesStorage.begin();
          it != m_feesStorage.end(); ++it)

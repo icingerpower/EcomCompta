@@ -20,7 +20,7 @@ public:
     double feesStorage() const;
 
     void recordFee(const QString &fee,
-                   int count,
+                   double count,
                    double total,
                    const QDate &date,
                    const QString &currency);
@@ -39,7 +39,7 @@ public:
 
 private:
     struct Fee{
-        int count;
+        double count;
         double total;
     };
     QMultiHash<QString, Fee> m_feesAds;

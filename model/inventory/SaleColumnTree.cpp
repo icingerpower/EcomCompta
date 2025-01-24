@@ -139,23 +139,23 @@ int SaleColumnTree::getColIndUnitPrice() const
     return -1;
 }
 
-bool SaleColumnTree::containsColumn(const QString &name) const
+QString SaleColumnTree::containsColumn(const QString &name) const
 {
     for (const auto &item : m_rootItem->children())
     {
         if (item->name().compare(name, Qt::CaseInsensitive) == 0)
         {
-            return true;
+            return item->name();
         }
         for (const auto &subItem : item->children())
         {
             if (subItem->name().compare(name, Qt::CaseInsensitive) == 0)
             {
-                return true;
+                return item->name();
             }
         }
     }
-    return true;
+    return QString{};
 }
 
 QStringList SaleColumnTree::getHeader() const
@@ -163,7 +163,7 @@ QStringList SaleColumnTree::getHeader() const
     QStringList header;
     for (const auto &item : m_rootItem->children())
     {
-        header << item->name().toLower();
+        header << item->name();
     }
     return header;
 }
