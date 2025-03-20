@@ -145,6 +145,7 @@ QMap<QDateTime, QFileInfo> CsvOrderFolders::getFileInfos() const
 }
 
 void CsvOrderFolders::addEconomicsData(
+    const QSet<QString> &extAmazons,
     const QString &economicsDirectory,
     const QDate &minDate,
     int indUnitPrice,
@@ -168,6 +169,7 @@ void CsvOrderFolders::addEconomicsData(
             CsvReader reader(itFileInfo->absoluteFilePath(), ",");
             reader.readAll();
             const DataFromCsv *dataRode = reader.dataRode();
+            int indAmazonExt = dataRode->header.pos("Amazon store");
             int indSku = dataRode->header.pos("MSKU");
             int indAmazonCountry = dataRode->header.pos("Amazon store");
             //int indDateStart = dataRode->header.pos("Start date");
@@ -176,66 +178,85 @@ void CsvOrderFolders::addEconomicsData(
             int indAverageSalePrice = dataRode->header.pos("Average sales price");
             int indUnitSold = dataRode->header.pos("Units sold");
             int indUnitReturned = dataRode->header.pos("Units returned");
-            int indFeesAmazonTotal = dataRode->header.pos("Base fulfilment fee total");
-            int indFeesAmazonQuantity = dataRode->header.pos("Base fulfilment fee quantity");
+            int indFeesAmazonReferal = dataRode->header.pos("Referral fee per unit");
+            int indFeesAmazonReferalQuantity = dataRode->header.pos("Referral fee quantity");
+            int indFeesAmazonFba = dataRode->header.pos({"Base fulfilment fee total", "FBA fulfillment fees total"});
+            int indFeesAmazonFbaQuantity = dataRode->header.pos({"Base fulfilment fee quantity", "FBA fulfillment fees quantity"});
             int indFeesStorageTotal = dataRode->header.pos("Base monthly storage fee total");
             int indFeesStorageQuantity = dataRode->header.pos("Base monthly storage fee quantity");
             int indFeesAdsTotal = dataRode->header.pos("Sponsored Products charge total");
             int indFeesAdsQuantity = dataRode->header.pos("Sponsored Products charge quantity");
             for (const auto &elements : dataRode->lines)
             {
-                const auto &dateEnd = QDate::fromString(elements[indDateEnd], "MM/dd/yyyy");
-                if (dateEnd < minDate)
+                const auto &amazonExt = elements[indAmazonExt];
+                if (extAmazons.contains(amazonExt))
                 {
-                    break;
-                }
-                const auto &sku = elements[indSku];
-                if (gsprData.contains(sku))
-                {
-                    if (!skuEconomics[sku].isUnitPriceRecorder())
+                    const auto &dateEnd = QDate::fromString(elements[indDateEnd], "MM/dd/yyyy");
+                    if (dateEnd < minDate)
                     {
-                        double unitPrice = gsprData[sku][indUnitPrice].toDouble();
-                        int weightGrams = gsprData[sku][indWeight].toDouble();
-                        skuEconomics[sku].recordUnitPrice(
-                            unitPrice, weightGrams, shippingByKilo, QDate::currentDate(), "EUR");
+                        break;
                     }
-                    int unitSold = elements[indUnitSold].toInt();
-                    skuEconomics[sku].recordUnitSold(
-                        elements[indUnitSold].toInt(), elements[indUnitReturned].toInt());
-                    const auto &currency = elements[indCurrency];
-                    skuEconomics[sku].recordAverageSalePriceTaxed(
-                        elements[indAmazonCountry], sku, unitSold,
-                        elements[indAverageSalePrice].toDouble(),
-                        dateEnd,
-                        currency);
-                    skuEconomics[sku].recordFee(
-                        "Base fulfilment fee",
-                        elements[indFeesAmazonQuantity].toDouble(),
-                        elements[indFeesAmazonTotal].toDouble(),
-                        dateEnd,
-                        currency);
-                    skuEconomics[sku].recordFee(
-                        "Base monthly storage fee",
-                        elements[indFeesStorageQuantity].toDouble(),
-                        elements[indFeesStorageTotal].toDouble(),
-                        dateEnd,
-                        currency);
-                    skuEconomics[sku].recordFee(
-                        "Sponsored Products charge",
-                        elements[indFeesAdsQuantity].toDouble(),
-                        elements[indFeesAdsTotal].toDouble(),
-                        dateEnd,
-                        currency);
+                    const auto &sku = elements[indSku];
+                    if (gsprData.contains(sku))
+                    {
+                        if (!skuEconomics[sku].isUnitPriceRecorder())
+                        {
+                            double unitPrice = gsprData[sku][indUnitPrice].toDouble();
+                            int weightGrams = gsprData[sku][indWeight].toDouble();
+                            if (unitPrice > 0. && weightGrams > 0)
+                            {
+                                skuEconomics[sku].recordUnitPrice(
+                                    unitPrice, weightGrams, shippingByKilo, QDate::currentDate(), "EUR");
+                            }
+                        }
+                        int unitSold = elements[indUnitSold].toInt();
+                        skuEconomics[sku].recordUnitSold(
+                            elements[indUnitSold].toInt(), elements[indUnitReturned].toInt());
+                        const auto &currency = elements[indCurrency];
+                        skuEconomics[sku].recordAverageSalePriceTaxed(
+                            elements[indAmazonCountry], sku, unitSold,
+                            elements[indAverageSalePrice].toDouble(),
+                            dateEnd,
+                            currency);
+                        skuEconomics[sku].recordFee(
+                            "Base fulfilment fee",
+                            elements[indFeesAmazonFbaQuantity].toDouble(),
+                            elements[indFeesAmazonFba].toDouble(),
+                            dateEnd,
+                            currency);
+                        skuEconomics[sku].recordFee(
+                            "Referal amazon fee",
+                            elements[indFeesAmazonReferalQuantity].toDouble(),
+                            elements[indFeesAmazonReferal].toDouble(),
+                            dateEnd,
+                            currency);
+                        skuEconomics[sku].recordFee(
+                            "Base monthly storage fee",
+                            elements[indFeesStorageQuantity].toDouble(),
+                            elements[indFeesStorageTotal].toDouble(),
+                            dateEnd,
+                            currency);
+                        skuEconomics[sku].recordFee(
+                            "Sponsored Products charge",
+                            elements[indFeesAdsQuantity].toDouble(),
+                            elements[indFeesAdsTotal].toDouble(),
+                            dateEnd,
+                            currency);
+                    }
                 }
             }
         }
     }
-    header << "Avg price untaxed";
+    header << "Sale price untaxed";
+    header << "Buy price import";
+    header << "Profit total";
+    header << "Quantity sold";
     header << "Profit";
     header << "Profit storage";
     header << "Profit ads";
     header << "Returned ratio";
-    header << "Fees amazon";
+    header << "Fees FBA";
+    header << "Fees amz referal";
     header << "Fees storage";
     header << "Fees ads";
     for (auto it = skuEconomics.begin();
@@ -244,11 +265,15 @@ void CsvOrderFolders::addEconomicsData(
         const auto &sku = it.key();
         const auto &economics = it.value();
         gsprData[sku] << QString::number(economics.averageSalePriceUntaxed());
+        gsprData[sku] << QString::number(economics.unitPrice());
+        gsprData[sku] << QString::number(economics.profitTotal());
+        gsprData[sku] << QString::number(economics.quantitySold());
         gsprData[sku] << QString::number(economics.profit());
         gsprData[sku] << QString::number(economics.profitWithStorage());
         gsprData[sku] << QString::number(economics.profitWithAds());
         gsprData[sku] << QString::number(economics.returnedRatio(), 'f', 2);
         gsprData[sku] << QString::number(economics.feesAmz());
+        gsprData[sku] << QString::number(economics.feesAmzReferal());
         gsprData[sku] << QString::number(economics.feesStorage());
         gsprData[sku] << QString::number(economics.feesAds());
     }

@@ -4,6 +4,7 @@
 #include <QAbstractListModel>
 #include <QFileInfo>
 #include <QDateTime>
+#include <QSet>
 
 #include "model/UpdateToCustomer.h"
 
@@ -17,7 +18,8 @@ public:
     static CsvOrderFolders *instance();
     QHash<QString, QStringList> getGsprData(SaleColumnTree *saleColumnTree) const;
     QMap<QDateTime, QFileInfo> getFileInfos() const;
-    void addEconomicsData(const QString &economicsDirectory,
+    void addEconomicsData(const QSet<QString> &extAmazons,
+                          const QString &economicsDirectory,
                           const QDate &minDate,
                           int indUnitPrice,
                           int indWeight,

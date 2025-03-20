@@ -11,10 +11,13 @@ public:
     SkuEconomics();
     double averageSalePriceUntaxed() const;
     bool isUnitPriceRecorder() const;
+    double profitTotal() const;
+    double quantitySold() const;
     double profit() const;
     double profitWithStorage() const;
     double profitWithAds() const;
     double returnedRatio() const;
+    double feesAmzReferal() const;
     double feesAmz() const;
     double feesAds() const;
     double feesStorage() const;
@@ -37,6 +40,8 @@ public:
                          const QDate &date,
                          const QString &currency);
 
+    double unitPrice() const;
+
 private:
     struct Fee{
         double count;
@@ -44,6 +49,7 @@ private:
     };
     QMultiHash<QString, Fee> m_feesAds;
     QMultiHash<QString, Fee> m_feesAmazon;
+    QMultiHash<QString, Fee> m_feesReferal; // 15% amazon commission
     QMultiHash<QString, Fee> m_feesStorage;
     QMultiHash<QString, Fee> m_feesOther;
     QMultiHash<int, double> m_averageSalePrices;

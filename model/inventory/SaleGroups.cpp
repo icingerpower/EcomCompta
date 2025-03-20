@@ -149,6 +149,17 @@ QSet<QString> SaleGroups::getAmazons(
     return amazons;
 }
 
+QSet<QString> SaleGroups::getExtAmazons(const QModelIndex &index) const
+{
+    const auto amazons = getAmazons(index);
+    QSet<QString> extAmazons;
+    for (const auto &amazon : amazons)
+    {
+        extAmazons << amazon.split(".").last().toUpper();
+    }
+    return extAmazons;
+}
+
 QStringList SaleGroups::getKeywordsSkus(const QModelIndex &index) const
 {
     QStringList values = m_listOfKeywordSkus[index.row()].split("\n");

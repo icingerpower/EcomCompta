@@ -2,6 +2,7 @@
 #define SALESLATESTTABLE_H
 
 #include <QAbstractTableModel>
+#include <QSet>
 
 class SaleColumnTree;
 
@@ -17,14 +18,14 @@ public:
             const QString &title,
             const QString &lang,
             int unit);
-    void compute(
-        QSet<QString> keywordSkus,
-        QSet<QString> subChannels,
+    void compute(const QSet<QString> &keywordSkus,
+        const QSet<QString> &subChannels,
         const QDate &dateFrom,
         const QDate &dateTo);
     void exportCsv(const QString &filePath,
                    SaleColumnTree *saleColumnTree,
                    const QString &dirEconomics,
+                   const QSet<QString> &extAmazons,
                    const QDate &minDate);
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;

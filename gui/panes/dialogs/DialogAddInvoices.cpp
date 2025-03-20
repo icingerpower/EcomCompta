@@ -94,6 +94,7 @@ void DialogAddInvoices::browseFilePaths()
     QStringList filePaths = QFileDialog::getOpenFileNames(
                 this, tr("Choisisez un ou plusieurs fichiers"),
                 lastDirPath);
+    bool hasDateDiffYear = false;
     if (filePaths.size() > 0) {
         ui->listWidgetFiles->clear();
         ui->listWidgetFiles->addItems(filePaths);
@@ -113,6 +114,10 @@ void DialogAddInvoices::browseFilePaths()
                 QDate date = QDate::fromString(elements[0], "yyyy-MM-dd");
                 if (!date.isValid()) {
                     date = QDate(2000, 1, 1);
+                }
+                if (date.year() != QDate::currentDate().year())
+                {
+                    hasDateDiffYear = true;
                 }
                 QTableWidgetItem *currentItem = new QTableWidgetItem();
                 currentItem->setData(Qt::DisplayRole, date);
@@ -225,6 +230,17 @@ void DialogAddInvoices::browseFilePaths()
                                 i, j, lineItems[j]);
                 }
             }
+        }
+    }
+    if (hasDateDiffYear)
+    {
+        auto reply = QMessageBox::question(
+            this,
+            "Date",
+            "Vous avez saisie une autre année, voulez-vous continuer ?",
+            QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::No) {
+            ui->tableWidgetInvoices->setRowCount(0);
         }
     }
 }

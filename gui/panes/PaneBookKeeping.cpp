@@ -556,6 +556,10 @@ void PaneBookKeeping::associate()
                 }
             }
         }
+        if (entrySetsNegative.size() == 0 && entrySetsPositive.size() == 0)
+        {
+            return;
+        }
         bankOnly &= (entrySetsNegative.size() == 1 && entrySetsPositive.size() == 1);
         if (bankOnly && entrySetsNegative[0]->currencyOrig() != entrySetsPositive[0]->currencyOrig()) {
             sum = 0;

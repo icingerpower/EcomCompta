@@ -20,28 +20,35 @@ void SkuEconomics::recordFee(
     const QDate &date,
     const QString &currency)
 {
-    const auto &bookKeepingCur = CustomerManager::instance()->getSelectedCustomerCurrency();
-    if (currency != bookKeepingCur)
+    if (count > 0)
     {
-        double rate = CurrencyRateManager::instance()->rate(
-                    currency, bookKeepingCur, date);
-        total *= rate;
-    }
-    if (fee.contains("fulfilment", Qt::CaseInsensitive))
-    {
-        m_feesAmazon.insert(fee, Fee{count, total});
-    }
-    else if (fee.contains("storage", Qt::CaseInsensitive))
-    {
-        m_feesStorage.insert(fee, Fee{count, total});
-    }
-    else if (fee.contains("sponsored", Qt::CaseInsensitive))
-    {
-        m_feesAds.insert(fee, Fee{count, total});
-    }
-    else
-    {
-        m_feesOther.insert(fee, Fee{count, total});
+        const auto &bookKeepingCur = CustomerManager::instance()->getSelectedCustomerCurrency();
+        if (currency != bookKeepingCur)
+        {
+            double rate = CurrencyRateManager::instance()->rate(
+                currency, bookKeepingCur, date);
+            total *= rate;
+        }
+        if (fee.contains("fulfilment", Qt::CaseInsensitive))
+        {
+            m_feesAmazon.insert(fee, Fee{count, total});
+        }
+        if (fee.contains("referal", Qt::CaseInsensitive))
+        {
+            m_feesReferal.insert(fee, Fee{count, total});
+        }
+        else if (fee.contains("storage", Qt::CaseInsensitive))
+        {
+            m_feesStorage.insert(fee, Fee{count, total});
+        }
+        else if (fee.contains("sponsored", Qt::CaseInsensitive))
+        {
+            m_feesAds.insert(fee, Fee{count, total});
+        }
+        else
+        {
+            m_feesOther.insert(fee, Fee{count, total});
+        }
     }
 }
 
@@ -103,6 +110,22 @@ bool SkuEconomics::isUnitPriceRecorder() const
     return m_unitPrice > 0.001;
 }
 
+double SkuEconomics::profitTotal() const
+{
+    return profit() * quantitySold();
+}
+
+double SkuEconomics::quantitySold() const
+{
+    int quantity = 0;
+    for (auto it = m_averageSalePrices.begin();
+         it != m_averageSalePrices.end(); ++it)
+    {
+        quantity += it.key();
+    }
+    return quantity;
+}
+
 void SkuEconomics::recordUnitPrice(
     double price,
     int weightGrams,
@@ -121,6 +144,11 @@ void SkuEconomics::recordUnitPrice(
     m_unitPrice = price + weightGrams * shippingByKiloEUR / 1000.;
 }
 
+double SkuEconomics::unitPrice() const
+{
+    return m_unitPrice;
+}
+
 double SkuEconomics::returnedRatio() const
 {
     if (m_unitSold == 0)
@@ -128,6 +156,23 @@ double SkuEconomics::returnedRatio() const
         return 0.;
     }
     return double(m_unitReturned) / m_unitSold;
+}
+
+double SkuEconomics::feesAmzReferal() const
+{
+    double feesAmzQuantity = 0;
+    double feesAmzTotal = 0.;
+    for (auto it = m_feesReferal.begin();
+         it != m_feesReferal.end(); ++it)
+    {
+        feesAmzQuantity += it.value().count;
+        feesAmzTotal += it.value().total;
+    }
+    if (feesAmzQuantity == 0)
+    {
+        return 0.;
+    }
+    return feesAmzTotal / feesAmzQuantity;
 }
 
 double SkuEconomics::feesAmz() const
@@ -187,8 +232,13 @@ double SkuEconomics::profit() const
     {
         return 0.;
     }
+    if (qAbs(m_unitPrice) < 0.01)
+    {
+        return 0.;
+    }
     double profit = averageSalePriceUntaxed();
     profit -= feesAmz();
+    profit -= feesAmzReferal();
     profit -= m_unitPrice;
     return profit;
 }

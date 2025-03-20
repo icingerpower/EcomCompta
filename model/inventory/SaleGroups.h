@@ -21,7 +21,8 @@ public:
 
     void add(const QString &name);
     void remove(const QModelIndex &index);
-    QSet<QString> getAmazons(const QModelIndex &index) const;
+    QSet<QString> getAmazons(const QModelIndex &index) const; //amazon.fr, amazon.de...
+    QSet<QString> getExtAmazons(const QModelIndex &index) const; // DE, FR...
     QStringList getKeywordsSkus(const QModelIndex &index) const;
     QSet<QString> getKeywordsSkusAsSet(const QModelIndex &index) const;
     void setKeywordsSkus(const QModelIndex &index, const QString &text);

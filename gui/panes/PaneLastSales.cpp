@@ -156,39 +156,51 @@ void PaneLastSales::exportCsv()
     auto model = ui->tableSales->model();
     if (model != nullptr)
     {
-        SalesLatestTable *salesModel = static_cast<SalesLatestTable *>(model);
-        QSettings settings;
-        QString key = "PaneLastSales__exportCsv";
-        QString lastDirPath = settings.value(
-                    key, QDir().absolutePath()).toString();
-        QString filePath = QFileDialog::getSaveFileName(
-                    this, tr("Choisir un fichier"),
-                    lastDirPath,
-                    "CSV (*.csv)");
-        if (!filePath.isEmpty())
+        auto selGroups = ui->tableViewGroups->selectionModel()->selectedIndexes();
+        if (selGroups.size() > 0)
         {
-            if (!filePath.toLower().endsWith(".csv"))
+            auto indexGroup = selGroups.first();
+            const auto &extAmazons = SaleGroups::instance()->getExtAmazons(indexGroup);
+            SalesLatestTable *salesModel = static_cast<SalesLatestTable *>(model);
+            QSettings settings;
+            QString key = "PaneLastSales__exportCsv";
+            QString lastDirPath = settings.value(
+                                              key, QDir().absolutePath()).toString();
+            QString filePath = QFileDialog::getSaveFileName(
+                this, tr("Choisir un fichier"),
+                lastDirPath,
+                "CSV (*.csv)");
+            if (!filePath.isEmpty())
             {
-                filePath += ".csv";
+                if (!filePath.toLower().endsWith(".csv"))
+                {
+                    filePath += ".csv";
+                }
+                int templateIndex = ui->comboBoxTemplates->currentIndex();
+                const auto &templateId = SaleTemplateManager::instance()->getId(templateIndex);
+                settings.setValue(key, QFileInfo{filePath}.dir().path());
+                const QString &idTree
+                    = SaleColumnTree::createId(templateId);
+                SaleColumnTree saleColumnTree{idTree};
+                const auto &minDate = ui->dateEditFrom->date();
+                const auto &dirEconomics = ui->lineEditEconomicsFolder->text();
+                try
+                {
+                    salesModel->exportCsv(filePath, &saleColumnTree, dirEconomics, extAmazons, minDate);
+                } catch (const CsvHeaderException &exception)
+                {
+                    QMessageBox::information(
+                        this,
+                        tr("Erreur format CSV"),
+                        tr("Colonnes manquantes") + " - " + QFileInfo{filePath}.fileName() + ": " + exception.columnValuesError().join(" - "));
+                }
             }
-            int templateIndex = ui->comboBoxTemplates->currentIndex();
-            const auto &templateId = SaleTemplateManager::instance()->getId(templateIndex);
-            settings.setValue(key, QFileInfo{filePath}.dir().path());
-            const QString &idTree
-                = SaleColumnTree::createId(templateId);
-            SaleColumnTree saleColumnTree{idTree};
-            const auto &minDate = ui->dateEditFrom->date();
-            const auto &dirEconomics = ui->lineEditEconomicsFolder->text();
-            try
-            {
-                salesModel->exportCsv(filePath, &saleColumnTree, dirEconomics, minDate);
-            } catch (const CsvHeaderException &exception)
-            {
-                QMessageBox::information(
-                    this,
-                    tr("Erreur format CSV"),
-                    tr("Colonnes manquantes:") + exception.columnValuesError().join(" - "));
-            }
+        }
+        else
+        {
+            QMessageBox::information(this,
+                                     tr("Pas de groupe sélectionné"),
+                                     tr("Vous devez sélectionner un groupe."));
         }
     }
 }

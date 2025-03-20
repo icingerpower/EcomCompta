@@ -292,6 +292,10 @@ void VatOrdersModel::computeVat(
          itShipment != itList->end();
          ++itShipment) {
             auto shipment = itShipment.value();
+            if (shipment->orderId() == "407-2432847-9631546")
+            {
+                int TEMP=10;++TEMP;
+            }
             if (shipment->isCompletelyLoaded()) {
                 callBackShipmentBeforeAccept(shipment);
                 /*

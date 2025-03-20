@@ -120,8 +120,8 @@ void SalesLatestTable::recordMovement(
 }
 
 void SalesLatestTable::compute(
-        QSet<QString> keywordSkus,
-        QSet<QString> subChannels,
+        const QSet<QString> &keywordSkus,
+        const QSet<QString> &subChannels,
         const QDate &dateFrom,
         const QDate &dateTo)
 {
@@ -211,6 +211,7 @@ void SalesLatestTable::exportCsv(
     const QString &filePath,
     SaleColumnTree *saleColumnTree,
     const QString &dirEconomics,
+    const QSet<QString> &extAmazons,
     const QDate &minDate)
 {
     QFile file(filePath);
@@ -232,6 +233,7 @@ void SalesLatestTable::exportCsv(
         int indColUnitPrice = saleColumnTree->getColIndUnitPrice();
         double shippingPricePerKilo = 3.;
         CsvOrderFolders::instance()->addEconomicsData(
+            extAmazons,
             dirEconomics,
             minDate,
             indColUnitPrice,
