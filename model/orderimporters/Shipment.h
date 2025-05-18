@@ -156,10 +156,14 @@ public:
     QHash<QString, QDate> getReportsFrom() const;
     QSet<QString> getSaleTypes() const;
 
+    QString vatScheme() const;
+    void setVatScheme(const QString &newVatScheme);
+
 protected:
     static QHash<QString, QHash<QString, int>> m_countriesFromByCustomerId;
     QString m_id;
     QString m_invoiceNumberMarketplace;
+    QString m_vatScheme;
     QString m_invoiceNumber;
     QDateTime m_dateTime;
     QHash<QString, QSharedPointer<ArticleSold>> m_articlesShipped;

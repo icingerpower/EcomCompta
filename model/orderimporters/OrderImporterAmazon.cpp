@@ -631,14 +631,14 @@ QSharedPointer<OrdersMapping> OrderImporterAmazon::_loadReportInvoicing(
     int indBillAddress3 = dataRode->header.pos({"bill-address-3", "Billing Address 3"});
     int indBillCity = dataRode->header.pos({"Billing City", "bill-city", "Billing City/Town"});
     int indBillPostalCode = dataRode->header.pos({"bill-postal-code", "Billing Postal Code"});
-    int indBillState = dataRode->header.pos({"Billing State", "bill-state", "Billing County"});
+    int indBillState = dataRode->header.pos({"Billing State", "bill-state", "Billing County", "Billing State/Province/Region"});
     int indBillCountry = dataRode->header.pos({"bill-country", "Billing Country Code"});
     int indShipAddress1 = dataRode->header.pos({"Shipping Address 1", "ship-address-1", "Delivery Address 1"});
     int indShipAddress2 = dataRode->header.pos({"Shipping Address 1", "ship-address-2", "Delivery Address 2"});
     int indShipAddress3 = dataRode->header.pos({"Shipping Address 1", "ship-address-3", "Delivery Address 3"});
     int indShipCity = dataRode->header.pos({"Shipping City", "ship-city", "Delivery City/Town"});
     int indShipPostalCode = dataRode->header.pos({"Shipping Postal Code", "ship-postal-code", "Delivery Postcode"});
-    int indShipState = dataRode->header.pos({"Shipping State", "ship-state", "Delivery County"});
+    int indShipState = dataRode->header.pos({"Shipping State", "ship-state", "Delivery County", "Shipping State/Province/Region"});
     int indShipCountry = dataRode->header.pos({"Shipping Country Code", "ship-country", "Delivery Country Code"});
     int indBuyerPhone = dataRode->header.pos({"Shipping Phone Number", "ship-phone-number", "Delivery Phone Number"});
     int indFbaCenter = dataRode->header.pos({"fulfillment-center-id", "FC"});

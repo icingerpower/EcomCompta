@@ -393,6 +393,7 @@ QSharedPointer<OrdersMapping> OrderImporterAmazonUE::_loadReportVat(
     int indAmountTotal = dataRode->header.pos("TOTAL_ACTIVITY_VALUE_AMT_VAT_INCL");
     int indAmountTaxes = dataRode->header.pos("TOTAL_ACTIVITY_VALUE_VAT_AMT");
     int indVatInvoiceNumber = dataRode->header.pos("VAT_INV_NUMBER");
+    int indTaxReportingScheme = dataRode->header.pos("TAX_REPORTING_SCHEME");
     int indTaxCollectionResponsibliity = -1;
     if (dataRode->header.contains("TAX_COLLECTION_RESPONSIBILITY")) {
         indTaxCollectionResponsibliity = dataRode->header.pos("TAX_COLLECTION_RESPONSIBILITY");
@@ -401,11 +402,12 @@ QSharedPointer<OrdersMapping> OrderImporterAmazonUE::_loadReportVat(
     for (auto elements : dataRode->lines) {
         QString transactionType = elements[indTransactionType];
         QString invoiceNumber = elements[indVatInvoiceNumber];
+        QString vatScheme = elements[indTaxReportingScheme];
         QString saleChannel = elements[indSaleChannel];
         QString vatCollectResponsible;
         QString countryCodeFrom = elements[indFromCountry];
         QString countryCodeTo = elements[indDestCountry];
-        if (invoiceNumber.contains("OSS")) {
+        if (invoiceNumber.contains("OSS") || vatScheme.contains("OSS")) {
             if (countryCodeTo == "GB") {
                 countryCodeTo = "GB-NIR"; // TODO I should handle north ireland with country code GBIE and special vat rate
             } else if (countryCodeFrom == "GB") {
@@ -463,6 +465,7 @@ QSharedPointer<OrdersMapping> OrderImporterAmazonUE::_loadReportVat(
                     }
                 }
                 shipment->setInvoiceNameMarketplace(invoiceNumber);
+                shipment->setVatScheme(vatScheme);
                 shipment->setFromAmazonVatReports(true);
                 QHash<QString, QSharedPointer<Shipment>> shipments;
                 shipments[refundOrShipmentId] = shipment;

@@ -100,6 +100,16 @@ QSet<QString> Shipment::getSaleTypes() const
     }
     return saleTypes;
 }
+
+QString Shipment::vatScheme() const
+{
+    return m_vatScheme;
+}
+
+void Shipment::setVatScheme(const QString &newVatScheme)
+{
+    m_vatScheme = newVatScheme;
+}
 //==========================================================
 bool Shipment::getFromAmazonVatReports() const
 {
@@ -243,6 +253,9 @@ void Shipment::merge(const Shipment &shipment)
     if (m_invoiceNumberMarketplace.isEmpty()) {
         m_invoiceNumberMarketplace = shipment.m_invoiceNumberMarketplace;
     }
+    if (m_vatScheme.isEmpty()) {
+        m_vatScheme = shipment.m_vatScheme;
+    }
     if (m_vatCollectResponsible.isEmpty()) {
         m_vatCollectResponsible = shipment.m_vatCollectResponsible;
     }
@@ -308,7 +321,7 @@ void Shipment::computeVatRegime(double &totalSaleCountryOss,
 {
     static QHash<QString, int> lastInvoiceName;
     bool wasVatChared = qAbs(m_vatForRoundCorrection) > 0.001;
-    if (m_order->getId() == "026-7236755-1016346") {
+    if (m_order->getId() == "408-0049752-6433930") {
         bool complete = isComplete();
         bool completeLoaded = isCompletelyLoaded();
         int TEMP=10;++TEMP;
@@ -322,10 +335,12 @@ void Shipment::computeVatRegime(double &totalSaleCountryOss,
         return m_countriesFromByCustomerId[customerId].contains(countryFrom);
     };
     int yearShipment = m_dateTime.date().year();
-    QString invoiceNumberMarketplace = getInvoiceNameMarketPlace();
+    //QString invoiceNumberMarketplace = getInvoiceNameMarketPlace();
     bool isAfterOss = m_dateTime >= QDateTime(QDate(2021,7,1)); /// This is te law
-    if (!invoiceNumberMarketplace.isEmpty() && isAfterOss) {
-        isAfterOss = invoiceNumberMarketplace.contains("UOSS");
+    //if (!invoiceNumberMarketplace.isEmpty() && isAfterOss)
+    if (!m_vatScheme.isEmpty() && isAfterOss)
+    {
+        isAfterOss = m_vatScheme.contains("UNION-OSS"); //|| invoiceNumberMarketplace.contains("UOSS");
     }
     int yearOrder = m_order->getDateTime().date().year();
     /*
