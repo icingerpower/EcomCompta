@@ -97,12 +97,19 @@ void ModelDiffAmazonUE::compute(const OrderManager *orderManager, int year)
             if (diffCountryVat) {
                 QString countryInvoice = shipment->getInvoiceNameMarketPlace();
                 if (!countryInvoice.isEmpty()) {
-                    QStringList elements = countryInvoice.split("-");
-                    elements.takeLast();
-                    elements.takeLast();
-                    elements.takeLast();
-                    QString countryInfo = elements.join("-");
-                    diffCountryVat = !countryInfo.contains(shipment->getCountryCodeVat());
+                    if (countryInvoice.contains("-"))
+                    {
+                        QStringList elements = countryInvoice.split("-");
+                        elements.takeLast();
+                        elements.takeLast();
+                        elements.takeLast();
+                        QString countryInfo = elements.join("-");
+                        diffCountryVat = !countryInfo.contains(shipment->getCountryCodeVat());
+                    }
+                    else
+                    {
+                        diffCountryVat = !countryInvoice.startsWith(shipment->getCountryCodeVat(), Qt::CaseInsensitive);
+                    }
                 }
             }
             bool diffCountryDeclaration = amazonValues[COL_COUNTRY_DECLARATION] != shipment->getCountrySaleDeclaration();
@@ -156,46 +163,6 @@ QVariant ModelDiffAmazonUE::headerData(
         return section + 1;
     }
     return QVariant();
-}
-//----------------------------------------------------------
-QString ModelDiffAmazonUE::amazonCountryToCode(const QString &country) const
-{
-    static QHash<QString, QString> mapping
-            = {{"FRANCE", "FR"}
-               ,{"UNITED KINGDOM", "GB"}
-               ,{"GERMANY", "DE"}
-               ,{"SPAIN", "ES"}
-               ,{"ITALY", "IT"}
-               ,{"POLAND", "PL"}
-               ,{"CZECH REPUBLIC", "CZ"}
-               ,{"NETHERLANDS", "NL"}
-               ,{"SWEDEN", "SE"}
-               ,{"BELGIUM", "BE"}
-               ,{"BULGARIA", "BG"}
-               ,{"DENMARK", "DK"}
-               ,{"ESTONIA", "EE"}
-               ,{"IRELAND", "IE"}
-               ,{"CROATIA", "HR"}
-               ,{"CYPRUS", "CY"}
-               ,{"LETTONIA", "LV"}
-               ,{"LITUANIA", "LT"}
-               ,{"LITHUANIA", "LT"}
-               ,{"GREECE", "GR"}
-               ,{"FINLAND", "FI"}
-               ,{"LUXEMBOURG", "LU"}
-               ,{"HUNGARY", "HU"}
-               ,{"MALTA", "MT"}
-               ,{"AUSTRIA", "AT"}
-               ,{"PORTUGAL", "PT"}
-               ,{"ROMANIA", "RO"}
-               ,{"SLOVENIA", "SI"}
-               ,{"SLOVAKIA", "SK"}
-               ,{"LATVIA", "LV"}
-               ,{"", ""}
-               };
-    QString upperCountry = country.toUpper();
-    Q_ASSERT(mapping.contains(upperCountry));
-    return mapping[upperCountry];
 }
 //----------------------------------------------------------
 int ModelDiffAmazonUE::rowCount(const QModelIndex &) const
@@ -285,7 +252,7 @@ void ModelDiffAmazonUE::computeAmazonVatData(int year)
                 m_valuesAmazon[shipmentId][COL_BUYER_VAT_NUMBER] = elements[dataRode->header.pos(COL_BUYER_VAT_NUMBER)];
                 m_valuesAmazon[shipmentId][COL_VAT_REGIME] = elements[dataRode->header.pos(COL_VAT_REGIME)];
                 m_valuesAmazon[shipmentId][COL_COUNTRY_VAT] = elements[dataRode->header.pos(COL_COUNTRY_VAT)];
-                m_valuesAmazon[shipmentId][COL_COUNTRY_DECLARATION] = amazonCountryToCode(elements[dataRode->header.pos(COL_COUNTRY_DECLARATION)]);
+                m_valuesAmazon[shipmentId][COL_COUNTRY_DECLARATION] = Shipment::amazonCountryDeclToCode(elements[dataRode->header.pos(COL_COUNTRY_DECLARATION)]);
                 m_valuesAmazon[shipmentId][COL_CURRENCY] = elements[dataRode->header.pos(COL_CURRENCY)];
                 m_valuesAmazon[shipmentId][COL_COUNTRY_TO] = elements[dataRode->header.pos(COL_COUNTRY_TO)];
                 m_valuesAmazon[shipmentId][COL_COUNTRY_FROM] = elements[dataRode->header.pos(COL_COUNTRY_FROM)];

@@ -19,7 +19,13 @@ class ReportMonthlyAmazon : public AbstractReportGenerator
 public:
     ReportMonthlyAmazon();
     QStringList addTable();
-    QStringList addTableRow(const Shipment *shipment, double untaxed, double taxes);
+    QStringList addTableRow(
+            const Shipment *shipment,
+            const QString &vatRegime,
+            const QString &accountSale,
+            const QString &accountVat,
+            double untaxed,
+            double taxes);
     QStringList addTableTotal(double untaxed, double taxes);
     void addTableMonthlyTotal(int monthMax,
             const QMap<QString, TablePriceTotal> &priceMonthly);
@@ -35,6 +41,7 @@ public:
             double amount);
     void addTableNonSaleTotal(
             double amount);
+    const QList<QStringList> &getCsvData() const;
 
 protected:
     struct ColInfo {
@@ -43,6 +50,7 @@ protected:
     };
     QList<ColInfo> colInfos() const;
     QString m_title;
+    QList<QStringList> m_csvListOfStringList;
 };
 
 #endif // REPORTMONTHLYAMAZON_H

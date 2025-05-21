@@ -394,10 +394,21 @@ QSharedPointer<OrdersMapping> OrderImporterAmazonUE::_loadReportVat(
     int indAmountTaxes = dataRode->header.pos("TOTAL_ACTIVITY_VALUE_VAT_AMT");
     int indVatInvoiceNumber = dataRode->header.pos("VAT_INV_NUMBER");
     int indTaxReportingScheme = dataRode->header.pos("TAX_REPORTING_SCHEME");
+    int indTaxCountry = dataRode->header.pos("VAT_CALCULATION_IMPUTATION_COUNTRY");
+    int indTaxCountryDeclaration = dataRode->header.pos("TAXABLE_JURISDICTION");
     int indTaxCollectionResponsibliity = -1;
     if (dataRode->header.contains("TAX_COLLECTION_RESPONSIBILITY")) {
         indTaxCollectionResponsibliity = dataRode->header.pos("TAX_COLLECTION_RESPONSIBILITY");
     }
+    struct ShipmentTotal{
+        double totalTaxed = 0.;
+        double totalTaxes = 0.;
+        QString countryVatAmazon;
+        QString countrySaleDeclarationAmazon;
+        QString regimeVatAmazon;
+        Shipment *shipmentOrRefund;
+    };
+    QHash<QString, ShipmentTotal> id_shipmentOrRefunds;
     //int indItemName = dataRode->header.pos("ITEM_DESCRIPTION");
     for (auto elements : dataRode->lines) {
         QString transactionType = elements[indTransactionType];
@@ -530,6 +541,22 @@ QSharedPointer<OrdersMapping> OrderImporterAmazonUE::_loadReportVat(
                 } else {
                     orderMapping->orderById[orderId]->merge(*order.data());
                 }
+                if (!id_shipmentOrRefunds.contains(refundOrShipmentId))
+                {
+                    id_shipmentOrRefunds[refundOrShipmentId] = ShipmentTotal{};
+                }
+                id_shipmentOrRefunds[refundOrShipmentId].totalTaxed
+                        += elements[indAmountTotal].toDouble();
+                id_shipmentOrRefunds[refundOrShipmentId].totalTaxes
+                        += elements[indAmountTaxes].toDouble();
+                id_shipmentOrRefunds[refundOrShipmentId].regimeVatAmazon
+                        = elements[indTaxReportingScheme];
+                id_shipmentOrRefunds[refundOrShipmentId].countryVatAmazon
+                        = elements[indTaxCountry];
+                id_shipmentOrRefunds[refundOrShipmentId].countrySaleDeclarationAmazon
+                        = Shipment::amazonCountryDeclToCode(elements[indTaxCountryDeclaration]);
+                id_shipmentOrRefunds[refundOrShipmentId].shipmentOrRefund
+                        = orderMapping->orderById[orderId]->getShipment(refundOrShipmentId).data();
             } else if (transactionType == "REFUND") {
                 QString sku = elements[indSKU];
                 QString orderId = elements[indAmazonOrderId];
@@ -578,6 +605,23 @@ QSharedPointer<OrdersMapping> OrderImporterAmazonUE::_loadReportVat(
                     orderMapping->refundByOrderId.insert(orderId, refund);
                     orderMapping->refundByDate[year].insert(dateTime, refund);
                 }
+                if (!id_shipmentOrRefunds.contains(refundId))
+                {
+                    id_shipmentOrRefunds[refundId] = ShipmentTotal{};
+                }
+                id_shipmentOrRefunds[refundId].totalTaxed
+                        += elements[indAmountTotal].toDouble();
+                id_shipmentOrRefunds[refundId].totalTaxes
+                        += elements[indAmountTaxes].toDouble();
+                id_shipmentOrRefunds[refundId].regimeVatAmazon
+                        = elements[indTaxReportingScheme];
+                id_shipmentOrRefunds[refundId].countryVatAmazon
+                        = elements[indTaxCountry];
+                id_shipmentOrRefunds[refundId].countrySaleDeclarationAmazon
+                        = Shipment::amazonCountryDeclToCode(elements[indTaxCountryDeclaration]);
+                id_shipmentOrRefunds[refundId].shipmentOrRefund
+                        = orderMapping->refundById[refundId].data();
+
             } else if (transactionType == "FC_TRANSFER") {
                 QString sku = elements[indSKU];
                 QString quantity = elements[indQty];
@@ -608,6 +652,15 @@ QSharedPointer<OrdersMapping> OrderImporterAmazonUE::_loadReportVat(
             auto order = orderMapping->orderById[orderId];
             refund->init(order.data());
         }
+    }
+    for (const auto &shipmentOrRefund : id_shipmentOrRefunds)
+    {
+        shipmentOrRefund.shipmentOrRefund->setAmazonVatInformations(
+                    shipmentOrRefund.countryVatAmazon
+                    , shipmentOrRefund.countrySaleDeclarationAmazon
+                    , shipmentOrRefund.regimeVatAmazon
+                    , shipmentOrRefund.totalTaxed
+                    , shipmentOrRefund.totalTaxes);
     }
     if (orderMapping->minDate > orderMapping->maxDate) {
         orderMapping->minDate = QDateTime();

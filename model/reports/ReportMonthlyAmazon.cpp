@@ -11,6 +11,11 @@
 ReportMonthlyAmazon::ReportMonthlyAmazon()
     : AbstractReportGenerator()
 {
+    QStringList csvColNames{QObject::tr("Régime TVA"), QObject::tr("Compte vente"), QObject::tr("Compte TVA")};
+    for (auto colInfo : colInfos()) {
+        csvColNames << colInfo.name;
+    }
+    m_csvListOfStringList << csvColNames;
 }
 //----------------------------------------------------------
 QStringList ReportMonthlyAmazon::addTable()
@@ -30,10 +35,16 @@ QStringList ReportMonthlyAmazon::addTable()
     return colNames;
 }
 //----------------------------------------------------------
-QStringList ReportMonthlyAmazon::addTableRow(const Shipment *shipment, double untaxed, double taxes)
+QStringList ReportMonthlyAmazon::addTableRow(
+        const Shipment *shipment,
+        const QString &vatRegime,
+        const QString &accountSale,
+        const QString &accountVat,
+        double untaxed,
+        double taxes)
 {
     QStringList values;
-    for (auto colInfo : colInfos()) {
+    for (const auto &colInfo : colInfos()) {
         values << colInfo.getValue(shipment);
     }
     values << QString::number(untaxed, 'f', 2);
@@ -42,6 +53,10 @@ QStringList ReportMonthlyAmazon::addTableRow(const Shipment *shipment, double un
     m_html += "<tr style=\"background:#d7f4ee\"><td style=\"padding:8px;\">";
     m_html += values.join("</td><td style=\"padding:8px;\">");
     m_html += "</td></tr>";
+    values.insert(0, accountVat);
+    values.insert(0, accountSale);
+    values.insert(0, vatRegime);
+    m_csvListOfStringList << values;
     return values;
 }
 //----------------------------------------------------------
@@ -183,6 +198,11 @@ void ReportMonthlyAmazon::addTableNonSaleTotal(
     m_html += "<tr style=\"background:#d7f4ee\"><b><td style=\"padding:8px;\"><b>";
     m_html += values.join("</b></td><td style=\"padding:8px;\"><b>");
     m_html += "</b></td></tr></table>";
+}
+//----------------------------------------------------------
+const QList<QStringList> &ReportMonthlyAmazon::getCsvData() const
+{
+    return m_csvListOfStringList;
 }
 //----------------------------------------------------------
 /*

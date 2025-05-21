@@ -543,6 +543,18 @@ QSharedPointer<Shipment> Order::getShipmentFirst() const
     return m_shipments.begin().value();
 }
 //==========================================================
+QSharedPointer<Shipment> Order::getShipment(const QString &id) const
+{
+    for (const auto &shipment : m_shipments)
+    {
+        if (shipment->getId() == id)
+        {
+            return shipment;
+        }
+    }
+    return QSharedPointer<Shipment>{nullptr};
+}
+//==========================================================
 void Order::setShipments(
         const QHash<QString, QSharedPointer<Shipment> > &shipments)
 {

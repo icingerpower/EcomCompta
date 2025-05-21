@@ -18,6 +18,8 @@
 #include "Order.h"
 #include "Refund.h"
 
+//#define AMAZON_RIGHT true
+
 #include "model/bookkeeping/ManagerAccountsSales.h"
 
 QString Shipment::VAT_REGIME_NONE = QObject::tr("Hors UE", "Pas de TVA en UE");
@@ -41,6 +43,46 @@ QStringList *Shipment::allRegimes()
                            VAT_REGIME_IOSS});
     return &allRegimes;
 }
+
+QString Shipment::amazonCountryDeclToCode(const QString &countryNameVatReport)
+{
+    static QHash<QString, QString> mapping
+            = {{"FRANCE", "FR"}
+               ,{"UNITED KINGDOM", "GB"}
+               ,{"GERMANY", "DE"}
+               ,{"SPAIN", "ES"}
+               ,{"ITALY", "IT"}
+               ,{"POLAND", "PL"}
+               ,{"CZECH REPUBLIC", "CZ"}
+               ,{"NETHERLANDS", "NL"}
+               ,{"SWEDEN", "SE"}
+               ,{"BELGIUM", "BE"}
+               ,{"BULGARIA", "BG"}
+               ,{"DENMARK", "DK"}
+               ,{"ESTONIA", "EE"}
+               ,{"IRELAND", "IE"}
+               ,{"CROATIA", "HR"}
+               ,{"CYPRUS", "CY"}
+               ,{"LETTONIA", "LV"}
+               ,{"LITUANIA", "LT"}
+               ,{"LITHUANIA", "LT"}
+               ,{"GREECE", "GR"}
+               ,{"FINLAND", "FI"}
+               ,{"LUXEMBOURG", "LU"}
+               ,{"HUNGARY", "HU"}
+               ,{"MALTA", "MT"}
+               ,{"AUSTRIA", "AT"}
+               ,{"PORTUGAL", "PT"}
+               ,{"ROMANIA", "RO"}
+               ,{"SLOVENIA", "SI"}
+               ,{"SLOVAKIA", "SK"}
+               ,{"LATVIA", "LV"}
+               ,{"", ""}
+               };
+    const QString &upperCountry = countryNameVatReport.toUpper();
+    Q_ASSERT(mapping.contains(upperCountry));
+    return mapping[upperCountry];
+}
 //==========================================================
 Shipment::Shipment(const QString &id,
                    const QHash<QString, QSharedPointer<ArticleSold>> &articlesShipped,
@@ -61,7 +103,71 @@ Shipment::Shipment(const QString &id,
     m_dateTime = dateTime;
     m_addressFrom = addressFrom;
     m_vatForRoundCorrection = vatForRoundCorrection;
+    m_totalPriceTaxedAmazon = 0.;
+    m_totalPriceTaxesAmazon = 0.;
     _recordAddressFromCountry();
+}
+//==========================================================
+void Shipment::setAmazonVatInformations(
+        const QString &countryVatAmazon,
+        const QString &countrySaleDeclarationAmazon,
+        const QString &regimeVatAmazon,
+        double totalPriceTaxedAmazon,
+        double totalPriceTaxesAmazon)
+{
+    m_countrySaleDeclarationAmazon = countrySaleDeclarationAmazon;
+    m_countryVatAmazon = countryVatAmazon;
+    if (regimeVatAmazon == "REGULAR")
+    {
+        m_regimeVatAmazon = VAT_REGIME_NORMAL;
+    }
+    else if (regimeVatAmazon == "UNION-OSS")
+    {
+        m_regimeVatAmazon = VAT_REGIME_OSS;
+    }
+    else if (regimeVatAmazon == "UK_VOEC-DOMESTIC")
+    {
+        m_regimeVatAmazon = VAT_REGIME_NONE;
+    }
+    else if (regimeVatAmazon == "UK_VOEC-IMPORT")
+    {
+        m_regimeVatAmazon = VAT_REGIME_NORMAL_EXPORT;
+    }
+    else if (regimeVatAmazon == "CH_VOEC")
+    {
+        m_regimeVatAmazon = VAT_REGIME_NORMAL_EXPORT;
+    }
+    else if (regimeVatAmazon == "NO_VOEC")
+    {
+        m_regimeVatAmazon = VAT_REGIME_NORMAL_EXPORT;
+    }
+    else if (regimeVatAmazon.contains("IOSS"))
+    {
+        m_regimeVatAmazon = VAT_REGIME_IOSS;
+    }
+    else
+    {
+        Q_ASSERT(false);
+    }
+    m_regimeVatAmazon = regimeVatAmazon;
+    m_totalPriceTaxedAmazon = totalPriceTaxedAmazon;
+    m_totalPriceTaxesAmazon = totalPriceTaxesAmazon;
+}
+//==========================================================
+QString Shipment::getAmazonVatRate() const
+{
+    double untaxed = getTotalPriceUntaxedAmazon();
+    if (qAbs(untaxed) > 0.00001)
+    {
+        double rate = getTotalPriceTaxesAmazon() / untaxed;
+        return QString::number(rate, 'f', 2);
+    }
+    return "0.00";
+}
+//==========================================================
+bool Shipment::hasAmazonVatInformations() const
+{
+    return !m_countryVatAmazon.isEmpty();
 }
 //==========================================================
 Shipment::~Shipment()
@@ -280,6 +386,12 @@ void Shipment::merge(const Shipment &shipment)
 //==========================================================
 QString Shipment::countryVat() const
 {
+#ifdef AMAZON_RIGHT
+    if (!m_countryVatAmazon.isEmpty())
+    {
+        return m_countryVatAmazon;
+    }
+#endif
     return m_countryVat;
 }
 //==========================================================
@@ -321,7 +433,8 @@ void Shipment::computeVatRegime(double &totalSaleCountryOss,
 {
     static QHash<QString, int> lastInvoiceName;
     bool wasVatChared = qAbs(m_vatForRoundCorrection) > 0.001;
-    if (m_order->getId() == "408-0049752-6433930") {
+    //if (m_order->getId() == "403-7978774-7968342") { // VA 406-2471898-8862728
+    if (m_order->getId() == "406-2471898-8862728") { // VAtican
         bool complete = isComplete();
         bool completeLoaded = isCompletelyLoaded();
         int TEMP=10;++TEMP;
@@ -338,10 +451,10 @@ void Shipment::computeVatRegime(double &totalSaleCountryOss,
     //QString invoiceNumberMarketplace = getInvoiceNameMarketPlace();
     bool isAfterOss = m_dateTime >= QDateTime(QDate(2021,7,1)); /// This is te law
     //if (!invoiceNumberMarketplace.isEmpty() && isAfterOss)
-    if (!m_vatScheme.isEmpty() && isAfterOss)
-    {
-        isAfterOss = m_vatScheme.contains("UNION-OSS"); //|| invoiceNumberMarketplace.contains("UOSS");
-    }
+    //if (!m_vatScheme.isEmpty() && isAfterOss)
+    //{
+        //isAfterOss = m_vatScheme.contains("UNION-OSS"); //|| invoiceNumberMarketplace.contains("UOSS");
+    //}
     int yearOrder = m_order->getDateTime().date().year();
     /*
     QString yearOrderString = QString::number(yearOrder);
@@ -738,7 +851,6 @@ void Shipment::computeVatRegime(double &totalSaleCountryOss,
             qWarning() << "VAT was " << vatBefore << " and now is " << vatAfter;
         }
     }
-
 }
 /*
 //==========================================================
@@ -871,6 +983,12 @@ bool Shipment::operator>(const Shipment &other) const
 //==========================================================
 double Shipment::getTotalPriceTaxed() const
 {
+#ifdef AMAZON_RIGHT
+    if (hasAmazonVatInformations())
+    {
+        return getTotalPriceTaxedAmazon();
+    }
+#endif
     double price = m_shipping.totalPriceTaxed();
     if (isFirstShipment()) {
         price += m_order->getShipping().totalPriceTaxed();
@@ -884,6 +1002,12 @@ double Shipment::getTotalPriceTaxed() const
 //==========================================================
 double Shipment::getTotalPriceTaxes(bool round) const
 {
+#ifdef AMAZON_RIGHT
+    if (hasAmazonVatInformations())
+    {
+        return getTotalPriceTaxesAmazon();
+    }
+#endif
     double price = m_vatForRoundCorrection;
     if (qAbs(price) < 0.001 || !round) {
         price = m_shipping.totalTaxes();
@@ -900,6 +1024,12 @@ double Shipment::getTotalPriceTaxes(bool round) const
 //==========================================================
 double Shipment::getTotalPriceUntaxed() const
 {
+#ifdef AMAZON_RIGHT
+    if (hasAmazonVatInformations())
+    {
+        return getTotalPriceUntaxedAmazon();
+    }
+#endif
     double value = getTotalPriceTaxed() - getTotalPriceTaxes();
     return value;
 }
@@ -991,35 +1121,22 @@ QMap<QString, QMap<QString, Price> > Shipment::getTotalPriceTaxesByVatRate() con
         taxesByRates[ManagerSaleTypes::SALE_PRODUCTS][vatRate].taxes
                 += orderShipping.totalTaxes();
     }
-    return taxesByRates;
-    /*
-    QMap<QString, Price> taxesByRates;
-    for (auto article : m_articlesShipped) {
-        taxesByRates[article->vatRateString()] = Price();
-    }
-    if (!m_shipping.isNull()) {
-        taxesByRates[m_shipping.vatRateString()] = Price();
-    }
-    for (auto article : m_articlesShipped) {
-        auto vatRate = article->vatRateString();
-        taxesByRates[vatRate].taxed += article->getTotalPriceTaxed();
-        taxesByRates[vatRate].untaxed += article->getTotalPriceUntaxed();
-        taxesByRates[vatRate].taxes += article->getTotalPriceTaxes();
-        auto shipping = article->getShipping();
-        if (!shipping.isNull()) {
-            taxesByRates[vatRate].taxed += shipping.totalPriceTaxed();
-            taxesByRates[vatRate].untaxed += shipping.totalPriceUntaxed();
-            taxesByRates[vatRate].taxes += shipping.totalTaxes();
+#ifdef AMAZON_RIGHT
+    if (!m_countryVatAmazon.isEmpty())
+    {
+        if (taxesByRates.size() == 1 && taxesByRates.first().size() == 1)
+        {
+            QMap<QString, QMap<QString, Price>> amzTaxesByRates;
+            amzTaxesByRates[ManagerSaleTypes::SALE_PRODUCTS][getAmazonVatRate()].taxes
+                    = getTotalPriceTaxesAmazon();
+            amzTaxesByRates[ManagerSaleTypes::SALE_PRODUCTS][getAmazonVatRate()].taxed
+                    = getTotalPriceTaxedAmazon();
+            return amzTaxesByRates;
         }
     }
-    if (!m_shipping.isNull()) {
-        auto vatRate = m_shipping.vatRateString();
-        taxesByRates[vatRate].taxed += m_shipping.totalPriceTaxed();
-        taxesByRates[vatRate].untaxed += m_shipping.totalPriceUntaxed();
-        taxesByRates[vatRate].taxes += m_shipping.totalTaxes();
-    }
+#endif
+
     return taxesByRates;
-    //*/
 }
 //==========================================================
 QMap<QString, QMap<QString, Price> > Shipment::getTotalPriceTaxesByVatRateConverted() const
@@ -1071,7 +1188,63 @@ QMap<QString, QMap<QString, Price> > Shipment::getTotalPriceTaxesByVatRateConver
         taxesByRates[ManagerSaleTypes::SALE_PRODUCTS][vatRate].taxes
                 += orderShipping.totalTaxesConverted();
     }
+    #ifdef AMAZON_RIGHT
+    if (!m_countryVatAmazon.isEmpty())
+    {
+        if (taxesByRates.size() == 1 && taxesByRates.first().size() == 1)
+        {
+            QMap<QString, QMap<QString, Price>> amzTaxesByRates;
+            amzTaxesByRates[ManagerSaleTypes::SALE_PRODUCTS][getAmazonVatRate()].taxes
+                    = getTotalPriceTaxesAmazonConverted();
+            amzTaxesByRates[ManagerSaleTypes::SALE_PRODUCTS][getAmazonVatRate()].taxed
+                    = getTotalPriceTaxedAmazonConverted();
+            return amzTaxesByRates;
+        }
+    }
+#endif
     return taxesByRates;
+}
+
+double Shipment::getTotalPriceTaxedAmazon() const
+{
+    return m_totalPriceTaxedAmazon;
+}
+
+double Shipment::getTotalPriceTaxedAmazonConverted() const
+{
+    return CurrencyRateManager::instance()->convert(
+                getTotalPriceTaxedAmazon(),
+                m_currency,
+                CustomerManager::instance()->getSelectedCustomerCurrency(),
+                getOrder()->getDateTime().date());
+}
+
+double Shipment::getTotalPriceUntaxedAmazon() const
+{
+    return m_totalPriceTaxedAmazon - m_totalPriceTaxesAmazon;
+}
+
+double Shipment::getTotalPriceUntaxedAmazonConverted() const
+{
+    return CurrencyRateManager::instance()->convert(
+                getTotalPriceUntaxedAmazon(),
+                m_currency,
+                CustomerManager::instance()->getSelectedCustomerCurrency(),
+                getOrder()->getDateTime().date());
+}
+
+double Shipment::getTotalPriceTaxesAmazon() const
+{
+    return m_totalPriceTaxesAmazon;
+}
+
+double Shipment::getTotalPriceTaxesAmazonConverted() const
+{
+    return CurrencyRateManager::instance()->convert(
+                getTotalPriceTaxesAmazon(),
+                m_currency,
+                CustomerManager::instance()->getSelectedCustomerCurrency(),
+                getOrder()->getDateTime().date());
 }
 //==========================================================
 /*

@@ -227,7 +227,7 @@ AccountingEntries EntryParserAmazonOrdersMonthly::entries(int year) const
                                 priceTotal.taxes += itValue->taxes;
                                 priceTotal.untaxed += itValue->untaxed;
                                 reportGenerator.addTableRow(
-                                            itValue->shipment, itValue->untaxed, itValue->taxes);
+                                            itValue->shipment, regime, accounts.saleAccount, accounts.vatAccount, itValue->untaxed, itValue->taxes);
                             }
                             /*
                         //for (auto value : itCountry.value()[ManagerAccountsSales::SALE_PRODUCTS].values(vatRate)) {
@@ -330,8 +330,11 @@ AccountingEntries EntryParserAmazonOrdersMonthly::entries(int year) const
         reportGenerator.addTitle(QObject::tr("Total IOSS"));
         reportGenerator.addTableMonthlyTotal(12, pricesByMonthIossTotal);
         reportGenerator.endHtml();
+        const auto &csvData = reportGenerator.getCsvData();
+        const QString &csvBaseName = journal + "-details-" + endOfMonth.toString("yyyy-MM");
         for (auto entrySet : entrySetsOfMonth) {
             entrySet->setHtmlDocument(reportGenerator.html());
+            entrySet->setCsvData(csvData, csvBaseName);
         }
     }
     return allEntries;

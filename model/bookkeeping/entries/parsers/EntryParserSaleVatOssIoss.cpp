@@ -149,13 +149,18 @@ AccountingEntries EntryParserSaleVatOssIoss::entries(
                                                                .constFind(itSaleType.key());
                                 double totalUntaxed = 0.;
                                 double totaltaxes = 0.;
+                                auto account = ManagerAccountsSales::instance()
+                                                   ->getAccounts(regimeVat,
+                                                                 itCountryCode.key(),
+                                                                 itSaleType.key(),
+                                                                 vatRate);
                                 for (auto itShipment = shipmentRefunds->begin();
                                      itShipment != shipmentRefunds->end(); ++itShipment) {
                                     auto shipmentOrRefund = itShipment.value();
                                     auto vatByRateConverted = shipmentOrRefund->getTotalPriceTaxesByVatRateConverted();
                                     auto price = vatByRateConverted[itSaleType.key()][itVatRate.key()];
                                     csvData << reportGenerator.addTableRow(
-                                        shipmentOrRefund, price.untaxed, price.taxes);
+                                        shipmentOrRefund, regimeVat, account.saleAccount, account.vatAccount, price.untaxed, price.taxes);
                                     totalUntaxed += price.untaxed;
                                     totaltaxes += price.taxes;
                                 }
@@ -182,11 +187,6 @@ AccountingEntries EntryParserSaleVatOssIoss::entries(
                                 entryDebit.setDate(date);
                                 entryDebit.setCurrency(currency);
                                 entryDebit.setLabel(label);
-                                auto account = ManagerAccountsSales::instance()
-                                                   ->getAccounts(regimeVat,
-                                                                 itCountryCode.key(),
-                                                                 itSaleType.key(),
-                                                                 vatRate);
                                 entryDebit.setAccount(account.vatAccount);
                                 if (amount > 0) {
                                     entryDebit.setDebitOrig(amount);

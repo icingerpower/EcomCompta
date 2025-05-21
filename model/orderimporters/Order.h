@@ -54,6 +54,7 @@ public:
     void addShipment(QSharedPointer<Shipment> shipment); ///Add in shipment order to avoid order id issue
     QHash<QString, QSharedPointer<Shipment> > getShipments() const;
     QSharedPointer<Shipment> getShipmentFirst() const;
+    QSharedPointer<Shipment> getShipment(const QString &id) const;
     void setShipments(const QHash<QString, QSharedPointer<Shipment> > &shipments);
     int getShipmentCount() const;
     bool isShippedNextYear() const;

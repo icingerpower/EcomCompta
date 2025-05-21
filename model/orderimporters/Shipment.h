@@ -41,6 +41,7 @@ public:
     static QString VAT_RESPONSIBLE_SELLER;
     static QString VAT_RESPONSIBLE_MARKETPLACE;
     static QStringList *allRegimes();
+    static QString amazonCountryDeclToCode(const QString &countryNameVatReport);
     Shipment(const QString &id,
              const QHash<QString, QSharedPointer<ArticleSold>> &articlesShipped,
              const Shipping &shipping,
@@ -48,6 +49,14 @@ public:
              const Address &addressFrom,
              const QString &currency,
              double vatForRoundCorrection);
+    void setAmazonVatInformations(
+            const QString &countryVatAmazon,
+            const QString &countrySaleDeclarationAmazon,
+            const QString &regimeVatAmazon,
+            double totalPriceTaxedAmazon,
+            double totalPriceTaxesAmazon);
+    QString getAmazonVatRate() const;
+    bool hasAmazonVatInformations() const;
     virtual ~Shipment();
     virtual void init(Order *order);
     bool isInitialized() const;
@@ -96,6 +105,12 @@ public:
     double getTotalPriceUntaxedConverted() const;
     QMap<QString, QMap<QString, Price>> getTotalPriceTaxesByVatRate() const;
     QMap<QString, QMap<QString, Price>> getTotalPriceTaxesByVatRateConverted() const;
+    double getTotalPriceTaxedAmazon() const;
+    double getTotalPriceTaxedAmazonConverted() const;
+    double getTotalPriceUntaxedAmazon() const;
+    double getTotalPriceUntaxedAmazonConverted() const;
+    double getTotalPriceTaxesAmazon() const;
+    double getTotalPriceTaxesAmazonConverted() const;
     //QMap<QString, double> getArticleChargedFees() const;
 
     Shipping getShipping() const;
@@ -183,6 +198,11 @@ protected:
     QString m_regimeVat;
     QString m_paymentId;
     bool m_fromAmazonVatReports;
+    QString m_countryVatAmazon;
+    QString m_countrySaleDeclarationAmazon;
+    QString m_regimeVatAmazon;
+    double m_totalPriceTaxedAmazon;
+    double m_totalPriceTaxesAmazon;
     QHash<QString, QDate> m_reportsFrom;
 };
 

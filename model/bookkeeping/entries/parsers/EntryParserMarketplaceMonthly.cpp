@@ -202,7 +202,7 @@ AccountingEntries EntryParserMarketplaceMonthly::entries(int year) const
                                 priceTotal.taxes += itValue->taxes;
                                 priceTotal.untaxed += itValue->untaxed;
                                 reportGenerator.addTableRow(
-                                            itValue->shipment, itValue->untaxed, itValue->taxes);
+                                            itValue->shipment, regime, accounts.saleAccount, accounts.vatAccount, itValue->untaxed, itValue->taxes);
                             }
 
                             reportGenerator.addTableTotal(priceTotal.untaxed, priceTotal.taxes);
