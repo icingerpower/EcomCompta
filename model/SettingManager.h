@@ -30,6 +30,7 @@ public:
     QString companyCountryName() const;
     QString companyCountryCode() const;
     //*/
+    static QString formatVatRate(double vatRate);
 
     QStringList currencies() const;
     /*

@@ -250,8 +250,10 @@ QSharedPointer<OrdersMapping> OrderImporterAmazonUE::_loadReportInvoicing(const 
 
         double articlePriceUntaxed = elements[indItemPriceUntaxed].toDouble();
         double articleTaxes = elements[indItemTax].toDouble();
-        double articlePricePromoUntaxed = elements[indItemPromo].toDouble();
-        double articlePricePromoTaxes = articleTaxes * articlePricePromoUntaxed / articlePriceUntaxed;
+        double articlePriceTaxed = articlePriceUntaxed + articleTaxes;
+        double articlePricePromoTaxed = elements[indItemPromo].toDouble();
+        double articlePricePromoUntaxed = articlePricePromoTaxed * articlePriceUntaxed / articlePriceTaxed;
+        double articlePricePromoTaxes = articlePricePromoTaxed - articlePricePromoUntaxed;
         double totalTaxes = articleTaxes + articlePricePromoTaxes;
         QDateTime dateTimeShipping = dateTimeFromString(elements[indShippingDate]);
         /*
@@ -689,8 +691,8 @@ QSharedPointer<OrdersMapping> OrderImporterAmazonUE::_loadReportOrdersFbm(const 
     int indItemTax = dataRode->header.pos("item-tax");
     int indShippingPrice = dataRode->header.pos("shipping-price");
     int indShippingTax = dataRode->header.pos("shipping-tax");
-    int indItemPromo = dataRode->header.pos("item-promotion-discount"); ///tax free
-    int indItemShippingPromo = dataRode->header.pos("ship-promotion-discount"); ///tax free I THINK
+    int indItemPromo = dataRode->header.pos({"item-promotion-discount", "Item Promo Discount"}); ///tax free
+    int indItemShippingPromo = dataRode->header.pos({"ship-promotion-discount", "Shipment Promo Discount"}); ///tax free I THINK
     int indShipAddress1 = dataRode->header.pos("ship-address-1");
     int indShipAddress2 = dataRode->header.pos("ship-address-2");
     int indShipAddress3 = dataRode->header.pos("ship-address-3");

@@ -86,7 +86,7 @@ double Shipping::vatRate() const
 //==========================================================
 QString Shipping::vatRateString() const
 {
-    return QString::number(vatRate(), 'f', 2);
+    return SettingManager::formatVatRate(vatRate());
 }
 //==========================================================
 void Shipping::reversePrice()

@@ -133,6 +133,7 @@ OrderManager *OrderManager::copyFilter(
         for (auto itOrder = itChannel.value().orderById.begin();
              itOrder != itChannel.value().orderById.end();
              ++itOrder) {
+            Q_ASSERT(itOrder.value().data() != nullptr);
             if (isOrderOk(itOrder.value().data())) {
                 copy->m_ordersByChannel[channel]
                         .orderById[itOrder.value()->getId()] = itOrder.value();
@@ -165,7 +166,7 @@ OrderManager *OrderManager::copyFilter(
              itShipment != itChannel.value().shipmentById.end();
              ++itShipment) {
             auto shipment = itShipment.value();
-            if (copy->m_ordersByChannel[channel].orderById.contains(
+            if (shipment->getOrder() != nullptr && copy->m_ordersByChannel[channel].orderById.contains(
                         shipment->getOrder()->getId())) {
                 if (!copy->m_ordersByChannel[channel].shipmentById.contains(itShipment.key())) {
                     copy->m_ordersByChannel[channel].shipmentById[itShipment.key()]

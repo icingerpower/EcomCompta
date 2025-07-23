@@ -1,10 +1,12 @@
 #include <qapplication.h>
 #include <QtCore/qsettings.h>
 #include <QMetaType>
+#include <QDoubleSpinBox>
+#include <QItemEditorFactory>
+#include <QItemEditorCreator>
 #include <qdebug.h>
 
 #include "../common/currencies/CurrencyRateManager.h"
-//#include "../common/types/types.h"
 
 #include "gui/DialogOpenConfig.h"
 
@@ -12,45 +14,13 @@
 
 #include "gui/MainWindow.h"
 
-/*
-QDataStream & operator << (
-        QDataStream &stream, const QList<QList<QVariant>> &listOfVariantList)
-{
-    int nLines = listOfVariantList.size();
-    int nColumns = 0;
-    if (nLines> 0) {
-        nColumns = listOfVariantList[0].size();
+class DoubleSpinBox3Digits : public QDoubleSpinBox {
+public:
+    explicit DoubleSpinBox3Digits(QWidget *p=nullptr) : QDoubleSpinBox(p) {
+        setDecimals(3);
     }
-    stream << QString::number(nLines) + "-" + QString::number(nColumns);
-    for (auto itLine=listOfVariantList.begin(); itLine!=listOfVariantList.end(); ++itLine) {
-        for (auto itElement = itLine->begin(); itElement != itLine->end(); ++itElement) {
-            stream << *itElement;
-        }
-    }
-    return stream;
-}
-//----------------------------------------
-QDataStream & operator >> (
-        QDataStream &stream, QList<QList<QVariant>> &listOfVariantList)
-{
-    QString sizeString;
-    stream >> sizeString;
-    QStringList sizeInfo = sizeString.split("-");
-    int nLines = sizeInfo[0].toInt();
-    int nColumns = sizeInfo[1].toInt();
-    for (int i=0; i<nLines; ++i) {
-        QList<QVariant> variantList;
-        for (int j=0; j<nColumns; ++j) {
-            QVariant value;
-            stream >> value;
-            variantList << value;
-        }
-        listOfVariantList << variantList;
-    }
-    return stream;
-}
-Q_DECLARE_METATYPE(QList<QList<QVariant>>);
-//*/
+    ~DoubleSpinBox3Digits(){}
+};
 
 int main(int argc, char *argv[])
 {
@@ -59,6 +29,12 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QCoreApplication::setOrganizationName("Icinger Power");
     QCoreApplication::setApplicationName("EcomCompta");
+
+    auto *fac = new QItemEditorFactory;
+    fac->registerEditor(QVariant::Double,
+                        new QItemEditorCreator<DoubleSpinBox3Digits>{"DoubleSpinBox3Digits"});
+
+    QItemEditorFactory::setDefaultFactory(fac);
     #ifndef Q_OS_LINUX
     QSettings::setDefaultFormat(QSettings::IniFormat);
     #endif

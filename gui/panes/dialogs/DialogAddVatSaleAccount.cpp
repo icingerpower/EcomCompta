@@ -51,10 +51,7 @@ double DialogAddVatSaleAccount::getVatRate() const
 //----------------------------------------------------------
 QString DialogAddVatSaleAccount::getVatRateString() const
 {
-    return QString::number(
-                ui->spinBoxVatRate->value(),
-                'f',
-                2);
+    return SettingManager::formatVatRate(ui->spinBoxVatRate->value());
 }
 //----------------------------------------------------------
 QString DialogAddVatSaleAccount::getAccountSale() const

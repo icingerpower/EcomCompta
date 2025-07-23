@@ -79,6 +79,22 @@ const QStringList *SettingManager::months()
               tr("Octobre"), tr("Novembre"), tr("Décembre")};
     return &months;
 }
+
+QString SettingManager::formatVatRate(double vatRate)
+{
+    QString vatRateString = QString::number(
+                vatRate,
+                'f',
+                4);
+    for (int i=0; i<2; ++i)
+    {
+        if (vatRateString.endsWith("0"))
+        {
+            vatRateString.remove(vatRateString.size()-1, 1);
+        }
+    }
+    return vatRateString;
+}
 //----------------------------------------------------------
 QStringList SettingManager::currencies() const
 {

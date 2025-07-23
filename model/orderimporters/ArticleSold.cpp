@@ -143,7 +143,7 @@ double ArticleSold::vatRate() const
 //==========================================================
 QString ArticleSold::vatRateString() const
 {
-    return QString::number(vatRate(), 'f', 2);
+    return SettingManager::formatVatRate(vatRate());
 }
 //==========================================================
 QString ArticleSold::toString(const QString &sep) const

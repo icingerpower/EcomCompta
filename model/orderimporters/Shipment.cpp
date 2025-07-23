@@ -160,7 +160,7 @@ QString Shipment::getAmazonVatRate() const
     if (qAbs(untaxed) > 0.00001)
     {
         double rate = getTotalPriceTaxesAmazon() / untaxed;
-        return QString::number(rate, 'f', 2);
+        return SettingManager::formatVatRate(rate);
     }
     return "0.00";
 }
