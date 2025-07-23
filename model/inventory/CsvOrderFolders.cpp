@@ -40,6 +40,10 @@ QHash<QString, QStringList> CsvOrderFolders::getGsprData(
          itDateTime != dateTimes.rend(); ++itDateTime)
     {
         const auto& fileInfo = fileInfos[*itDateTime];
+        if (fileInfo.fileName().contains("ook-cover-010-FR__FGUANG__3530.4EUR.csv"))
+        {
+            int TEMP=10;++TEMP;
+        }
         QFile file(fileInfo.absoluteFilePath());
         if (file.open(QFile::ReadOnly))
         {
@@ -80,6 +84,10 @@ QHash<QString, QStringList> CsvOrderFolders::getGsprData(
                         if (elements.size() > maxIndex)
                         {
                             const auto &sku = elements[colIndSku];
+                            if (sku == "A5-BOOK-COVER-DESIGN-49-DOG")
+                            {
+                                int TEMP=10;++TEMP;
+                            }
                             if (!sku.isEmpty() && elements.size() >= headerFromIndex.size())
                             {
                                 if (!gsprData.contains(sku))
@@ -89,7 +97,8 @@ QHash<QString, QStringList> CsvOrderFolders::getGsprData(
                                         const auto &colNameLower = colName.toLower();
                                         if (headerFromIndexLower.contains(colNameLower))
                                         {
-                                            gsprData[sku] << elements[headerFromIndexLower[colNameLower]];
+                                            const auto &value = elements[headerFromIndexLower[colNameLower]];
+                                            gsprData[sku] << value;
                                         }
                                         else
                                         {
@@ -103,9 +112,13 @@ QHash<QString, QStringList> CsvOrderFolders::getGsprData(
                                     {
                                         const QString &colName = headerTo[i];
                                         const auto &colNameLower = colName.toLower();
-                                        if (headerFromIndexLower.contains(colNameLower) && gsprData[sku][i].isEmpty())
+                                        bool containsCol = headerFromIndexLower.contains(colNameLower);
+                                        const auto &curGsprData = gsprData[sku][i];
+                                        bool curGsprDataEmpty = curGsprData.isEmpty();
+                                        if (containsCol && curGsprDataEmpty)
                                         {
-                                            gsprData[sku][i] = elements[headerFromIndexLower[colNameLower]];
+                                            const auto &value = elements[headerFromIndexLower[colNameLower]];
+                                            gsprData[sku][i] = value;
                                         }
                                     }
                                 }
@@ -124,22 +137,37 @@ QMap<QDateTime, QFileInfo> CsvOrderFolders::getFileInfos() const
     QMap<QDateTime, QFileInfo> fileInfosByDateTime;
     for (const auto &folderPath : m_folderPaths)
     {
-        QList<QDir> dirs;
-        QDir dir{folderPath};
-        dirs << dir;
-        const auto &subDirNames = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-        for (const auto &subDirName : subDirNames)
+        const auto &cur = getFileInfos(folderPath);
+        for (auto it = cur.begin(); it != cur.end(); ++it)
         {
-            dirs << QDir{dir.absoluteFilePath(subDirName)};
+            fileInfosByDateTime.insert(it.key(), it.value());
         }
-        for (const auto &curDir : qAsConst(dirs))
+    }
+    return fileInfosByDateTime;
+}
+
+QMap<QDateTime, QFileInfo> CsvOrderFolders::getFileInfos(
+    const QString &dirPath) const
+{
+    QMap<QDateTime, QFileInfo> fileInfosByDateTime;
+    QDir dir(dirPath);
+    const auto &dirFileInfos = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for (const auto &dirInfo : dirFileInfos)
+    {
+        const auto &cur = getFileInfos(dirInfo.absoluteFilePath());
+        for (auto it = cur.begin(); it != cur.end(); ++it)
         {
-            const auto &fileInfos = curDir.entryInfoList(QStringList{"*.csv"}, QDir::Files);
-            for (const auto &fileInfo : fileInfos)
-            {
-                fileInfosByDateTime.insert(fileInfo.lastModified(), fileInfo);
-            }
+            fileInfosByDateTime.insert(it.key(), it.value());
         }
+    }
+    const auto &fileInfos = dir.entryInfoList(QDir::Files);
+    for (const auto &fileInfo : fileInfos)
+    {
+        if (fileInfo.fileName().contains("ook-cover-010-FR__FGUANG__3530.4EUR.csv"))
+        {
+            int TEMP=10;++TEMP;
+        }
+        fileInfosByDateTime.insert(fileInfo.lastModified(), fileInfo);
     }
     return fileInfosByDateTime;
 }
@@ -199,11 +227,15 @@ void CsvOrderFolders::addEconomicsData(
                     const auto &sku = elements[indSku];
                     if (gsprData.contains(sku))
                     {
+                        if (sku == "A5-BOOK-COVER-DESIGN-49-DOG")
+                        {
+                            int TEMP=10;++TEMP;
+                        }
                         if (!skuEconomics[sku].isUnitPriceRecorder())
                         {
                             double unitPrice = gsprData[sku][indUnitPrice].toDouble();
                             int weightGrams = gsprData[sku][indWeight].toDouble();
-                            if (unitPrice > 0. && weightGrams > 0)
+                            if (unitPrice > 0.)
                             {
                                 skuEconomics[sku].recordUnitPrice(
                                     unitPrice, weightGrams, shippingByKilo, QDate::currentDate(), "EUR");
@@ -249,9 +281,11 @@ void CsvOrderFolders::addEconomicsData(
     }
     header << "Sale price untaxed";
     header << "Buy price import";
+    header << "Profit / Unit Price";
+    header << "Profit (%)";
+    header << "Profit";
     header << "Profit total";
     header << "Quantity sold";
-    header << "Profit";
     header << "Profit storage";
     header << "Profit ads";
     header << "Returned ratio";
@@ -266,9 +300,11 @@ void CsvOrderFolders::addEconomicsData(
         const auto &economics = it.value();
         gsprData[sku] << QString::number(economics.averageSalePriceUntaxed());
         gsprData[sku] << QString::number(economics.unitPrice());
+        gsprData[sku] << QString::number(economics.profitOverUnitPriceRatio());
+        gsprData[sku] << QString::number(economics.profitPercent());
+        gsprData[sku] << QString::number(economics.profit());
         gsprData[sku] << QString::number(economics.profitTotal());
         gsprData[sku] << QString::number(economics.quantitySold());
-        gsprData[sku] << QString::number(economics.profit());
         gsprData[sku] << QString::number(economics.profitWithStorage());
         gsprData[sku] << QString::number(economics.profitWithAds());
         gsprData[sku] << QString::number(economics.returnedRatio(), 'f', 2);

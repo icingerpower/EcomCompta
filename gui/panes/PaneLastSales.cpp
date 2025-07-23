@@ -6,6 +6,7 @@
 #include "../common/utils/CsvHeader.h"
 
 #include "gui/panes/dialogs/DialogEditSalesTemplate.h"
+#include "gui/panes/itemdelegates/SaleGroupsDelegate.h"
 
 #include "model/SettingManager.h"
 #include "model/inventory/SaleGroups.h"
@@ -26,6 +27,7 @@ PaneLastSales::PaneLastSales(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->tableViewGroups->setModel(SaleGroups::instance());
+    ui->tableViewGroups->setItemDelegate(new SaleGroupsDelegate(ui->tableViewGroups));
     ui->listViewCsvOrderFolders->setModel(CsvOrderFolders::instance());
     m_updatingTextEditGroup = false;
 

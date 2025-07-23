@@ -28,7 +28,6 @@ QWidget *SaleGroupsDelegate::createEditor(
                     parent, option, index);
     }
     return widget;
-
 }
 
 void SaleGroupsDelegate::setEditorData(
@@ -40,4 +39,25 @@ void SaleGroupsDelegate::setEditorData(
         QString amazon = index.data().toString();
         comboBox->setCurrentText(amazon);
     }
+    else
+    {
+        QStyledItemDelegate::setEditorData(editor, index);
+    }
+}
+
+void SaleGroupsDelegate::setModelData(
+    QWidget *editor,
+    QAbstractItemModel *model,
+    const QModelIndex &index) const
+{
+    if (index.column() == 1)
+    {
+        QComboBox *comboBox = static_cast<QComboBox *>(editor);
+        model->setData(index, comboBox->currentText());
+    }
+    else
+    {
+        QStyledItemDelegate::setModelData(editor, model, index);
+    }
+
 }

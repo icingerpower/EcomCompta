@@ -126,6 +126,16 @@ double SkuEconomics::quantitySold() const
     return quantity;
 }
 
+double SkuEconomics::profitOverUnitPriceRatio() const
+{
+    return profit() / unitPrice();
+}
+
+double SkuEconomics::profitPercent() const
+{
+    return profit() / averageSalePriceUntaxed() * 100.;
+}
+
 void SkuEconomics::recordUnitPrice(
     double price,
     int weightGrams,
@@ -196,8 +206,8 @@ double SkuEconomics::feesAds() const
 {
     double feesAdsQuantity = 0;
     double feesAdsTotal = 0.;
-    for (auto it = m_feesStorage.begin();
-         it != m_feesStorage.end(); ++it)
+    for (auto it = m_feesAds.begin();
+         it != m_feesAds.end(); ++it)
     {
         feesAdsQuantity += it.value().count;
         feesAdsTotal += it.value().total;

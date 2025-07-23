@@ -13,6 +13,8 @@ public:
     bool isUnitPriceRecorder() const;
     double profitTotal() const;
     double quantitySold() const;
+    double profitOverUnitPriceRatio() const;
+    double profitPercent() const;
     double profit() const;
     double profitWithStorage() const;
     double profitWithAds() const;

@@ -444,7 +444,7 @@ bool ManagerAccountsSales::setData(
 {
     if (role == Qt::EditRole) {
         if (index.column() == 3) {
-            m_values[index.row()][index.column()] = QString::number(value.toDouble(), 'f', 2);
+            m_values[index.row()][index.column()] = SettingManager::formatVatRate(value.toDouble());
         } else {
             m_values[index.row()][index.column()] = value.toString();
         }

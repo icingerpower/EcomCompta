@@ -18,6 +18,7 @@ public:
     static CsvOrderFolders *instance();
     QHash<QString, QStringList> getGsprData(SaleColumnTree *saleColumnTree) const;
     QMap<QDateTime, QFileInfo> getFileInfos() const;
+    QMap<QDateTime, QFileInfo> getFileInfos(const QString &dirPath) const;
     void addEconomicsData(const QSet<QString> &extAmazons,
                           const QString &economicsDirectory,
                           const QDate &minDate,

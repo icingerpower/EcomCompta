@@ -273,7 +273,7 @@ void InvoiceGenerator::addArticleInfo(
     double vatRate = taxesTotal / priceUntaxedTotal;
     values << title;
     values << QString::number(quantity);
-    values << QString::number(vatRate, 'f', 2);
+    values << SettingManager::formatVatRate(vatRate);
     values << QString::number(priceUntaxedTotal, 'f', 2);
     values << QString::number(taxesTotal, 'f', 2);
     values << currency;
