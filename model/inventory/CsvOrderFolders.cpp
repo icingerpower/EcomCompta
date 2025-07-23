@@ -40,10 +40,6 @@ QHash<QString, QStringList> CsvOrderFolders::getGsprData(
          itDateTime != dateTimes.rend(); ++itDateTime)
     {
         const auto& fileInfo = fileInfos[*itDateTime];
-        if (fileInfo.fileName().contains("ook-cover-010-FR__FGUANG__3530.4EUR.csv"))
-        {
-            int TEMP=10;++TEMP;
-        }
         QFile file(fileInfo.absoluteFilePath());
         if (file.open(QFile::ReadOnly))
         {
@@ -84,10 +80,6 @@ QHash<QString, QStringList> CsvOrderFolders::getGsprData(
                         if (elements.size() > maxIndex)
                         {
                             const auto &sku = elements[colIndSku];
-                            if (sku == "A5-BOOK-COVER-DESIGN-49-DOG")
-                            {
-                                int TEMP=10;++TEMP;
-                            }
                             if (!sku.isEmpty() && elements.size() >= headerFromIndex.size())
                             {
                                 if (!gsprData.contains(sku))
@@ -163,10 +155,6 @@ QMap<QDateTime, QFileInfo> CsvOrderFolders::getFileInfos(
     const auto &fileInfos = dir.entryInfoList(QDir::Files);
     for (const auto &fileInfo : fileInfos)
     {
-        if (fileInfo.fileName().contains("ook-cover-010-FR__FGUANG__3530.4EUR.csv"))
-        {
-            int TEMP=10;++TEMP;
-        }
         fileInfosByDateTime.insert(fileInfo.lastModified(), fileInfo);
     }
     return fileInfosByDateTime;
@@ -227,10 +215,6 @@ void CsvOrderFolders::addEconomicsData(
                     const auto &sku = elements[indSku];
                     if (gsprData.contains(sku))
                     {
-                        if (sku == "A5-BOOK-COVER-DESIGN-49-DOG")
-                        {
-                            int TEMP=10;++TEMP;
-                        }
                         if (!skuEconomics[sku].isUnitPriceRecorder())
                         {
                             double unitPrice = gsprData[sku][indUnitPrice].toDouble();

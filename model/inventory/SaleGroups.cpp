@@ -157,6 +157,10 @@ QSet<QString> SaleGroups::getExtAmazons(const QModelIndex &index) const
     {
         extAmazons << amazon.split(".").last().toUpper();
     }
+    if (extAmazons.contains("COM"))
+    {
+        extAmazons << "US";
+    }
     return extAmazons;
 }
 
