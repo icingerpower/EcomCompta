@@ -38,13 +38,17 @@ QList<QList<QVariant>> ServiceSalesModel::loadListOfVariantList(
             QTextStream stream(&file);
             auto data = stream.readAll();
             if (!data.trimmed().isEmpty()) {
-                QStringList lines = data.split("\n");
+                QStringList lines = data.trimmed().split("\n");
                 //beginInsertRows(QModelIndex(), 0, lines.size()-1);
                 //int i=0;
                 //QList<int> indexesTEMP = {2, 0, 0, 0};
                 for (auto itLine = lines.begin();
                      itLine != lines.end(); ++itLine) {
                     QStringList elements = itLine->split(";");
+                    if (elements.size() == 1)
+                    {
+                        continue;
+                    }
                     QList<QVariant> variantList;
                     for (auto itEl = elements.begin();
                          itEl != elements.end(); ++itEl) {
@@ -88,9 +92,10 @@ void ServiceSalesModel::load(int year)
             auto data = stream.readAll();
             if (!data.trimmed().isEmpty()) {
                 QStringList lines = data.split("\n");
-                beginInsertRows(QModelIndex(), 0, lines.size()-1);
+                QList<QList<QVariant>> listOfVariantList;
                 //int i=0;
                 //QList<int> indexesTEMP = {2, 0, 0, 0};
+                int maxSize = 0;
                 for (auto itLine = lines.begin();
                      itLine != lines.end(); ++itLine) {
                     QStringList elements = itLine->split(";");
@@ -98,6 +103,10 @@ void ServiceSalesModel::load(int year)
                     for (auto itEl = elements.begin();
                          itEl != elements.end(); ++itEl) {
                         variantList << *itEl;
+                    }
+                    if (elements.size() < 2)
+                    {
+                        continue;
                     }
                     elements[IND_COL_AMOUNT] = elements[IND_COL_AMOUNT].toDouble();
                     elements[IND_COL_UNIT] = elements[IND_COL_UNIT].toInt();
@@ -107,9 +116,19 @@ void ServiceSalesModel::load(int year)
                     //}
                     //variantList.insert(3, "Commission sur publicité");
                     //variantList.insert(3, 1);
-                    m_listOfVariantList << variantList;
+                    maxSize = qMax(variantList.size(), maxSize);
+                    listOfVariantList << variantList;
                     //++i;
                 }
+                for (auto &variantList : listOfVariantList)
+                {
+                    for (int i=variantList.size(); i<maxSize; ++i)
+                    {
+                        variantList << QStringList{};
+                    }
+                }
+                beginInsertRows(QModelIndex(), 0, listOfVariantList.size()-1);
+                m_listOfVariantList = std::move(listOfVariantList);
                 endInsertRows();
             }
             file.close();

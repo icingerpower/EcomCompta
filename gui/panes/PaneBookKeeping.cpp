@@ -570,6 +570,14 @@ void PaneBookKeeping::associate()
                 sum += entrySet->amountConv();
             }
         }
+        if (entrySetsNegative.size() == 0 && entrySetsPositive.size() > 1)
+        {
+            QMessageBox::critical(
+                        this, tr("Erreur"),
+                        tr("Pas de montant négatif sélectionné"),
+                        QMessageBox::Ok);
+            return;
+        }
         double relDiffAfterConv = qAbs(1.*sum/entrySetsNegative[0]->amountOrig());
         if (qAbs(sum) < 0.009) { /// Associating
             bool debitContainsPurchase = false;

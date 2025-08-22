@@ -4,6 +4,8 @@
 #include <QDoubleSpinBox>
 #include <QItemEditorFactory>
 #include <QItemEditorCreator>
+#include <QLineEdit>
+#include <QSpinBox>
 #include <qdebug.h>
 
 #include "../common/currencies/CurrencyRateManager.h"
@@ -17,6 +19,8 @@
 class DoubleSpinBox3Digits : public QDoubleSpinBox {
 public:
     explicit DoubleSpinBox3Digits(QWidget *p=nullptr) : QDoubleSpinBox(p) {
+        setMinimum(-99999);
+        setMaximum(99999);
         setDecimals(3);
     }
     ~DoubleSpinBox3Digits(){}
@@ -33,6 +37,12 @@ int main(int argc, char *argv[])
     auto *fac = new QItemEditorFactory;
     fac->registerEditor(QVariant::Double,
                         new QItemEditorCreator<DoubleSpinBox3Digits>{"DoubleSpinBox3Digits"});
+    fac->registerEditor(QVariant::String,
+                        new QItemEditorCreator<QLineEdit>{"LineEdit"});
+
+    fac->registerEditor(QVariant::LongLong,
+                        new QItemEditorCreator<QSpinBox>{"SpinBox"});
+
 
     QItemEditorFactory::setDefaultFactory(fac);
     #ifndef Q_OS_LINUX
